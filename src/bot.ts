@@ -19,13 +19,22 @@ bot.onText(/\/start/, async (msg) => {
 bot.onText(/\/covid/, async (msg) => {
   const chatId = msg.chat.id
 
-  const today = new Date();
-	const day = String(today.getDate()).padStart(2, '0');
-	const month = String(today.getMonth() + 1).padStart(2, '0');
-	const year = today.getFullYear();
-	
-	const message = fs.readFileSync(process.env.TEST_PATH + "/covid"+day+""+month+""+year+".txt",'utf8')
+    try{
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
 
-  bot.sendMessage(chatId, message)
+        const message = fs.readFileSync(process.env.TEST_PATH + "/covid"+day+""+month+""+year+".txt",'utf8')
+        bot.sendMessage(chatId, message)
+  }catch(e){
+        // eslint-disable-next-line no-console
+        console.error(e)
+        bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.")
+    }
+
+
+
+
 })
 
