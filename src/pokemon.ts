@@ -1,16 +1,46 @@
 import axios from 'axios';
 import pokemonInfo from './types/pokemonInfo';
 import pokemonStats from './types/pokemonStats';
+import {imagePosition} from "./types/imagePosition";
 
 const URL = "https://pokeapi.co/api/v2/pokemon";
 
 async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     const result = await axios.get(URL + '/'+ pokemon);
     const data = await result.data;
+
+    const types = getTypes(data);
+    const stats = getStats(data);
+
+    const res: pokemonInfo = {
+        name: data.name,
+        url: URL + '/' + pokemon,
+        types: types,
+        stats: stats,
+    }
+    // eslint-disable-next-line no-console
+    console.log(res);
+    return res;
+}
+
+async function getImageURL(name: string, gen: string, game: string, animated: boolean, image_position: imagePosition): Promise<string>{
+    const result = await axios.get(URL + '/'+ name);
+    const data = await result.data;
+    const url = animated ? data['sprites']['versions'][gen][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][gen][game][imagePosition[image_position]];
+    // eslint-disable-next-line no-console
+    console.log(url);
+    return url;
+}
+
+function getTypes(data: any): any[] {
     const types = [];
     for(const type of data.types) {
         types.push(type.type.name)
     }
+    return types;
+}
+
+function getStats(data: any): pokemonStats {
     const stats = {} as pokemonStats
     for(const stat of data.stats){
         switch(stat.stat.name){
@@ -44,16 +74,7 @@ async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
             }
         }
     }
-
-    const res: pokemonInfo = {
-        name: data.name,
-        url: URL + '/' + pokemon,
-        types: types,
-        stats: stats,
-    }
-    // eslint-disable-next-line no-console
-    console.log(res);
-    return res;
+    return stats;
 }
 
 /*async function getPokemonMoves(){
@@ -108,6 +129,7 @@ async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     }
 }*/
 
-getPokemonInfo('zacian');
+getPokemonInfo('mudkip');
+getImageURL("mudkip", 'generation-v', 'black-white', true, imagePosition.front_default)
 
 
