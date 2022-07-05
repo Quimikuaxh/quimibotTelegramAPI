@@ -2,6 +2,7 @@ import axios from 'axios';
 import pokemonInfo from './types/pokemonInfo';
 import pokemonStats from './types/pokemonStats';
 import {imagePosition} from "./types/imagePosition";
+import {generation} from "./types/generation";
 
 const URL = "https://pokeapi.co/api/v2/pokemon";
 
@@ -12,32 +13,63 @@ async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     const types = getTypes(data);
     const stats = getStats(data);
 
+    const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
+
     const res: pokemonInfo = {
         name: data.name,
         url: URL + '/' + pokemon,
         types: types,
         stats: stats,
+        image: imageURL,
     }
     // eslint-disable-next-line no-console
     console.log(res);
     return res;
 }
 
-async function getImageURL(name: string, gen: string, game: string, animated: boolean, image_position: imagePosition): Promise<string>{
+async function getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
+    const image_position = getImagePosition(front, female, shiny)
     const result = await axios.get(URL + '/'+ name);
     const data = await result.data;
-    const url = animated ? data['sprites']['versions'][gen][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][gen][game][imagePosition[image_position]];
-    // eslint-disable-next-line no-console
-    console.log(url);
-    return url;
+    return animated ? data['sprites']['versions'][generation[gen]][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][generation[gen]][game][imagePosition[image_position]];
 }
 
-function getTypes(data: any): any[] {
+function getTypes(data: any): string[] {
     const types = [];
     for(const type of data.types) {
-        types.push(type.type.name)
+        types.push(type.type.name as string)
     }
     return types;
+}
+
+function getImagePosition(front: boolean, female: boolean, shiny: boolean): imagePosition{
+    switch(true){
+        case (front && female && shiny): {
+            return imagePosition.front_shiny_female;
+        }
+        case (front && !female && shiny): {
+            return imagePosition.front_shiny;
+        }
+        case (front && !female && !shiny): {
+            return imagePosition.front_default;
+        }
+        case (front && female && !shiny): {
+            return imagePosition.front_female;
+        }
+        case (!front && female && shiny): {
+            return imagePosition.back_shiny_female;
+        }
+        case (!front && !female && shiny): {
+            return imagePosition.back_shiny;
+        }
+        case (!front && !female && !shiny): {
+            return imagePosition.back_default;
+        }
+        case (!front && female && !shiny): {
+            return imagePosition.back_female;
+        }
+        default: return imagePosition.front_default;
+    }
 }
 
 function getStats(data: any): pokemonStats {
@@ -130,6 +162,5 @@ function getStats(data: any): pokemonStats {
 }*/
 
 getPokemonInfo('mudkip');
-getImageURL("mudkip", 'generation-v', 'black-white', true, imagePosition.front_default)
 
 
