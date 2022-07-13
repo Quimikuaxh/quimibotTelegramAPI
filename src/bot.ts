@@ -40,7 +40,7 @@ bot.onText(/\/prueba/, async (msg) => {
     try{
         const pokemonImage = await Pokemon.getImageFromWiki('victini');
         const pokemon = await Pokemon.getPokemonInfo('victini');
-        bot.sendDocument(chatId,pokemonImage, {caption : `*${pokemon.name}*\n\n` +
+        bot.sendPhoto(chatId,pokemonImage, {caption : `*${pokemon.name}*\n\n` +
                 `*Types:* ${pokemon.types}\n` +
                 'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"})
     }catch(e){
