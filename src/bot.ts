@@ -35,7 +35,7 @@ bot.onText(/\/covid/, async (msg) => {
     }
 })
 
-bot.onText(/\/prueba/, async (msg) => {
+bot.onText(/\/pokemon/, async (msg) => {
     const chatId = msg.chat.id
     const messageText = msg.text;
     try{
