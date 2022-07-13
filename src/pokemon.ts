@@ -8,6 +8,8 @@ import * as cheerio from "cheerio";
 const API_URL = "https://pokeapi.co/api/v2/pokemon";
 const WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     const result = await axios.get(API_URL + '/'+ pokemon);
     const data = await result.data;
@@ -30,6 +32,8 @@ async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     return res;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 async function getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
     const image_position = getImagePosition(front, female, shiny)
     const result = await axios.get(API_URL + '/'+ name);
