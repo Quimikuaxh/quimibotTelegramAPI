@@ -37,12 +37,20 @@ bot.onText(/\/covid/, async (msg) => {
 
 bot.onText(/\/prueba/, async (msg) => {
     const chatId = msg.chat.id
+    const messageText = msg.text;
     try{
-        const pokemonImage = await Pokemon.getImageFromWiki('victini');
-        const pokemon = await Pokemon.getPokemonInfo('victini');
-        bot.sendPhoto(chatId,pokemonImage, {caption : `*${pokemon.name}*\n\n` +
-                `*Types:* ${pokemon.types}\n` +
-                'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"})
+        const pokemonName = messageText?.split(" ")[1];
+        if(pokemonName){
+            const pokemonImage = await Pokemon.getImageFromWiki(pokemonName);
+            const pokemon = await Pokemon.getPokemonInfo(pokemonName);
+            bot.sendPhoto(chatId, pokemonImage, {caption : `*${pokemon.name}*\n\n` +
+                    `*Types:* ${pokemon.types}\n\n` +
+                    'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"});
+        }
+        else {
+            bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")
+        }
+
     }catch(e){
         // eslint-disable-next-line no-console
         console.error(e)

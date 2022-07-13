@@ -23,7 +23,7 @@ static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     const imageURL = await this.getImageFromWiki(pokemon)
 
     const res: pokemonInfo = {
-        name: data.name,
+        name: data.name.toUpperCase(),
         url: API_URL + '/' + pokemon,
         types: types,
         stats: stats,
@@ -124,18 +124,18 @@ static async getImageFromWiki(pokemonName: string): Promise<string>{
     let html = searchResult.data;
     let $ = cheerio.load(html)
     const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
+    console.log(`URL: ${pokemonURL}`)
 
     if(pokemonURL){
         searchResult = await axios.get(pokemonURL);
         html = searchResult.data;
         $ = cheerio.load(html)
-        const aux = $('div.wds-is-current > figure > a', html).first().attr('href');
+        const aux = $('figure.pi-image > a.image-thumbnail', html).first().attr('href');
+        console.log(`URL: ${aux}`)
         if(aux){
             res = aux;
         }
     }
-    // eslint-disable-next-line no-console
-    console.log(`Photo: ${res}`);
     return res;
 }
 
