@@ -32,9 +32,18 @@ bot.onText(/\/covid/, async (msg) => {
         console.error(e)
         bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.")
     }
+})
 
-
-
-
+bot.onText(/\/prueba/, async (msg) => {
+    const chatId = msg.chat.id
+    try{
+        bot.sendDocument(chatId,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/258.gif', {caption : 'Hola, soy Quimibot, ¡y hago un montón de cosas! Entre ellas, puedo hacer las siguientes:\n\n' +
+                '*Otros:*\n' +
+                '*/covid |* Te digo los diez países con más casos de COVID-19 actualmente', parse_mode: "Markdown"})
+    }catch(e){
+        // eslint-disable-next-line no-console
+        console.error(e)
+        bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.")
+    }
 })
 

@@ -3,21 +3,24 @@ import pokemonInfo from './types/pokemonInfo';
 import pokemonStats from './types/pokemonStats';
 import {imagePosition} from "./types/imagePosition";
 import {generation} from "./types/generation";
+import * as cheerio from "cheerio";
 
-const URL = "https://pokeapi.co/api/v2/pokemon";
+const API_URL = "https://pokeapi.co/api/v2/pokemon";
+const WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
 
 async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
-    const result = await axios.get(URL + '/'+ pokemon);
+    const result = await axios.get(API_URL + '/'+ pokemon);
     const data = await result.data;
 
     const types = getTypes(data);
     const stats = getStats(data);
 
-    const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
+    // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
+    const imageURL = await getImageFromWiki(pokemon)
 
     const res: pokemonInfo = {
         name: data.name,
-        url: URL + '/' + pokemon,
+        url: API_URL + '/' + pokemon,
         types: types,
         stats: stats,
         image: imageURL,
@@ -29,7 +32,7 @@ async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
 
 async function getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
     const image_position = getImagePosition(front, female, shiny)
-    const result = await axios.get(URL + '/'+ name);
+    const result = await axios.get(API_URL + '/'+ name);
     const data = await result.data;
     return animated ? data['sprites']['versions'][generation[gen]][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][generation[gen]][game][imagePosition[image_position]];
 }
@@ -109,6 +112,27 @@ function getStats(data: any): pokemonStats {
     return stats;
 }
 
+async function getImageFromWiki(pokemonName: string): Promise<string>{
+    let res = '';
+    let searchResult = await axios.get(WIKI_URL + pokemonName);
+    let html = searchResult.data;
+    let $ = cheerio.load(html)
+    const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
+
+    if(pokemonURL){
+        searchResult = await axios.get(pokemonURL);
+        html = searchResult.data;
+        $ = cheerio.load(html)
+        const aux = $('div.wds-is-current > figure > a', html).first().attr('href');
+        if(aux){
+            res = aux;
+        }
+    }
+    // eslint-disable-next-line no-console
+    console.log(`Photo: ${res}`);
+    return res;
+}
+
 /*async function getPokemonMoves(){
     let movesByEdition = [];
 
@@ -161,6 +185,7 @@ function getStats(data: any): pokemonStats {
     }
 }*/
 
-getPokemonInfo('mudkip');
+/*getPokemonInfo('mudkip');
+getImageFromWiki("mudkip");*/
 
 
