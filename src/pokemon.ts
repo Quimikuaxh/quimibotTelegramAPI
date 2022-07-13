@@ -8,17 +8,19 @@ import * as cheerio from "cheerio";
 const API_URL = "https://pokeapi.co/api/v2/pokemon";
 const WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
 
+export class Pokemon {
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
+static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     const result = await axios.get(API_URL + '/'+ pokemon);
     const data = await result.data;
 
-    const types = getTypes(data);
-    const stats = getStats(data);
+    const types = this.getTypes(data);
+    const stats = this.getStats(data);
 
     // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
-    const imageURL = await getImageFromWiki(pokemon)
+    const imageURL = await this.getImageFromWiki(pokemon)
 
     const res: pokemonInfo = {
         name: data.name,
@@ -34,14 +36,14 @@ async function getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-async function getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
-    const image_position = getImagePosition(front, female, shiny)
+static async getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
+    const image_position = this.getImagePosition(front, female, shiny)
     const result = await axios.get(API_URL + '/'+ name);
     const data = await result.data;
     return animated ? data['sprites']['versions'][generation[gen]][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][generation[gen]][game][imagePosition[image_position]];
 }
 
-function getTypes(data: any): string[] {
+static getTypes(data: any): string[] {
     const types = [];
     for(const type of data.types) {
         types.push(type.type.name as string)
@@ -49,7 +51,7 @@ function getTypes(data: any): string[] {
     return types;
 }
 
-function getImagePosition(front: boolean, female: boolean, shiny: boolean): imagePosition{
+static getImagePosition(front: boolean, female: boolean, shiny: boolean): imagePosition{
     switch(true){
         case (front && female && shiny): {
             return imagePosition.front_shiny_female;
@@ -79,7 +81,7 @@ function getImagePosition(front: boolean, female: boolean, shiny: boolean): imag
     }
 }
 
-function getStats(data: any): pokemonStats {
+static getStats(data: any): pokemonStats {
     const stats = {} as pokemonStats
     for(const stat of data.stats){
         switch(stat.stat.name){
@@ -116,7 +118,7 @@ function getStats(data: any): pokemonStats {
     return stats;
 }
 
-async function getImageFromWiki(pokemonName: string): Promise<string>{
+static async getImageFromWiki(pokemonName: string): Promise<string>{
     let res = '';
     let searchResult = await axios.get(WIKI_URL + pokemonName);
     let html = searchResult.data;
@@ -189,6 +191,7 @@ async function getImageFromWiki(pokemonName: string): Promise<string>{
     }
 }*/
 
+}
 /*getPokemonInfo('mudkip');
 getImageFromWiki("mudkip");*/
 

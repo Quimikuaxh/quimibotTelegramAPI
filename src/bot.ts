@@ -1,6 +1,7 @@
 import './env'
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs'
+import {Pokemon} from './pokemon'
 
 const token = process.env.BOT_TOKEN ?? "tokenVacio"
 
@@ -37,9 +38,11 @@ bot.onText(/\/covid/, async (msg) => {
 bot.onText(/\/prueba/, async (msg) => {
     const chatId = msg.chat.id
     try{
-        bot.sendDocument(chatId,'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/258.gif', {caption : 'Hola, soy Quimibot, ¡y hago un montón de cosas! Entre ellas, puedo hacer las siguientes:\n\n' +
-                '*Otros:*\n' +
-                '*/covid |* Te digo los diez países con más casos de COVID-19 actualmente', parse_mode: "Markdown"})
+        const pokemonImage = await Pokemon.getImageFromWiki('victini');
+        const pokemon = await Pokemon.getPokemonInfo('victini');
+        bot.sendDocument(chatId,pokemonImage, {caption : `*${pokemon.name}*\n\n` +
+                `*Types:* ${pokemon.types}\n` +
+                'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"})
     }catch(e){
         // eslint-disable-next-line no-console
         console.error(e)
