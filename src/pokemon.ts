@@ -22,7 +22,7 @@ static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
     const imageURL = await this.getImageFromWiki(pokemon)
 
-    const moves = await this.getPokemonMoves(pokemon);
+    //const moves = await this.getPokemonMoves(pokemon);
 
     const res: pokemonInfo = {
         name: data.name.toUpperCase(),
@@ -30,7 +30,7 @@ static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
         types: types,
         stats: stats,
         image: imageURL,
-        moves: moves,
+        moves: [],
     }
     // eslint-disable-next-line no-console
     console.log(res);
