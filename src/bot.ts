@@ -39,13 +39,16 @@ bot.onText(/\/pokemon/, async (msg) => {
     const chatId = msg.chat.id
     const messageText = msg.text;
     try{
-        const pokemonName = messageText?.split(" ")[1];
+        const pokemonName = messageText?.replace("/pokemon", "").trim().toLowerCase();
         if(pokemonName){
             const pokemonImage = await Pokemon.getImageFromWiki(pokemonName);
             const pokemon = await Pokemon.getPokemonInfo(pokemonName);
-            bot.sendPhoto(chatId, pokemonImage, {caption : `*${pokemon.name}*\n\n` +
-                    `*Types:* ${pokemon.types}\n\n` +
-                    'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"});
+            if(pokemon){
+                bot.sendPhoto(chatId, pokemonImage, {caption : `*${pokemon.name}*\n\n` +
+                        `*Types:* ${pokemon.types}\n\n` +
+                        'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"});
+            }
+            bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")
         }
         else {
             bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")

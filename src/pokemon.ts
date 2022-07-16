@@ -22,12 +22,15 @@ static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
     const imageURL = await this.getImageFromWiki(pokemon)
 
+    const moves = await this.getPokemonMoves(pokemon);
+
     const res: pokemonInfo = {
         name: data.name.toUpperCase(),
         url: API_URL + '/' + pokemon,
         types: types,
         stats: stats,
         image: imageURL,
+        moves: moves,
     }
     // eslint-disable-next-line no-console
     console.log(res);
@@ -124,6 +127,7 @@ static async getImageFromWiki(pokemonName: string): Promise<string>{
     let html = searchResult.data;
     let $ = cheerio.load(html)
     const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
+    // eslint-disable-next-line no-console
     console.log(`URL: ${pokemonURL}`)
 
     if(pokemonURL){
@@ -131,6 +135,7 @@ static async getImageFromWiki(pokemonName: string): Promise<string>{
         html = searchResult.data;
         $ = cheerio.load(html)
         const aux = $('figure.pi-image > a.image-thumbnail', html).first().attr('href');
+        // eslint-disable-next-line no-console
         console.log(`URL: ${aux}`)
         if(aux){
             res = aux;
@@ -139,57 +144,59 @@ static async getImageFromWiki(pokemonName: string): Promise<string>{
     return res;
 }
 
-/*async function getPokemonMoves(){
-    let movesByEdition = [];
+    static async getPokemonMoves(pokemon: any): Promise<any[]>{
+        const movesByEdition: any[] = [];
 
-    //First, we obtain the pokémon with the list of moves it can learn
-    const result = await axios.get(URL + '/'+ "pikachu");
-    const data = await result.data;
+        //First, we obtain the pokémon with the list of moves it can learn
+        const data = await pokemon.data;
 
-    let moves = data.moves;
-    let stats = data.stats;
+        const moves = data.moves;
 
-    //console.log(moves[0].move.name);
-    //For each move, we get its info and each version in which the pokémon can learn the move
-    for(const move of moves) {
-        //console.log(move.move.name);
-        let moveName = move.move.name;
-        let editions = move.version_group_details;
-        let moveURL = move.move.url;
-        console.log(moveURL);
+        //console.log(moves[0].move.name);
+        //For each move, we get its info and each version in which the pokémon can learn the move
+        for(const move of moves) {
+            //console.log(move.move.name);
+            const moveName = move.move.name;
+            const editions = move.version_group_details;
+            const moveURL = move.move.url;
+            // eslint-disable-next-line no-console
+            console.log(moveURL);
 
-        //Now we are getting the move info
-        let moveInfo = await fetch(moveURL);
-        let moveData = await moveInfo.json();
+            //Now we are getting the move info
+            const moveInfo = await fetch(moveURL);
+            const moveData = await moveInfo.json();
 
-        let description = moveData.effect_entries.effect;
-        //If accuracy or power are null, it takes no effect on the move
-        let accuracy = moveData.accuracy == null ? "-" : moveData.accuracy;
-        let power = moveData.power == null ? "-" : moveData.power;
+            const description = moveData.effect_entries.effect;
+            //If accuracy or power are null, it takes no effect on the move
+            const accuracy = moveData.accuracy == null ? "-" : moveData.accuracy;
+            const power = moveData.power == null ? "-" : moveData.power;
 
-        editions.forEach((edition) => {
-            //console.log(edition.version_group.name);
-            const editionName = edition.version_group.name
-            const levelLearnt = edition.level_learned_at;
+            editions.forEach((edition: any) => {
+                //console.log(edition.version_group.name);
+                const editionName = edition.version_group.name
+                const levelLearnt = edition.level_learned_at;
 
-            if (movesByEdition[editionName] == null) {
-                movesByEdition[editionName] = [{
-                    "move": moveName,
-                    "levelLearnt": levelLearnt,
-                    "accuracy": accuracy,
-                    "power": power
-                }];
-            } else {
-                movesByEdition[editionName].push({
-                    "move": moveName,
-                    "levelLearnt": levelLearnt,
-                    "accuracy": accuracy,
-                    "power": power
-                });
-            }
-        })
+                if (movesByEdition[editionName] == null) {
+                    movesByEdition[editionName] = [{
+                        "move": moveName,
+                        "levelLearnt": levelLearnt,
+                        "accuracy": accuracy,
+                        "power": power,
+                        "description": description
+                    }];
+                } else {
+                    movesByEdition[editionName].push({
+                        "move": moveName,
+                        "levelLearnt": levelLearnt,
+                        "accuracy": accuracy,
+                        "power": power,
+                        "description": description
+                    });
+                }
+            })
+        }
+        return movesByEdition;
     }
-}*/
 
 }
 /*getPokemonInfo('mudkip');
