@@ -48,7 +48,9 @@ bot.onText(/\/pokemon/, async (msg) => {
                         `*Types:* ${pokemon.types}\n\n` +
                         'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"});
             }
-            bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")
+            else{
+                bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")
+            }
         }
         else {
             bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")
