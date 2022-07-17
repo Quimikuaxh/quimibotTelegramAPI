@@ -20,7 +20,7 @@ static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
     const stats = this.getStats(data);
 
     // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
-    const imageURL = await this.getImageFromWiki(pokemon)
+    const imageURL = await this.getImageFromWiki(data.name)
 
     //const moves = await this.getPokemonMoves(pokemon);
 
@@ -127,16 +127,12 @@ static async getImageFromWiki(pokemonName: string): Promise<string>{
     let html = searchResult.data;
     let $ = cheerio.load(html)
     const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
-    // eslint-disable-next-line no-console
-    console.log(`URL: ${pokemonURL}`)
 
     if(pokemonURL){
         searchResult = await axios.get(pokemonURL);
         html = searchResult.data;
         $ = cheerio.load(html)
         const aux = $('figure.pi-image > a.image-thumbnail', html).first().attr('href');
-        // eslint-disable-next-line no-console
-        console.log(`URL: ${aux}`)
         if(aux){
             res = aux;
         }
