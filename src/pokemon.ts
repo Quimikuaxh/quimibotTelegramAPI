@@ -4,141 +4,177 @@ import pokemonStats from './types/pokemonStats';
 import {imagePosition} from "./types/imagePosition";
 import {generation} from "./types/generation";
 import * as cheerio from "cheerio";
+import pokemonID from "./types/pokemonID";
 
-const API_URL = "https://pokeapi.co/api/v2/pokemon";
+const API_URL = "https://pokeapi.co/api/v2/";
 const WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
 
 export class Pokemon {
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
-    const result = await axios.get(API_URL + '/'+ pokemon);
-    const data = await result.data;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
+        const result = await axios.get(API_URL + 'pokemon/'+ pokemon);
+        const data = await result.data;
 
-    const types = this.getTypes(data);
-    const stats = this.getStats(data);
+        const types = this.getTypes(data);
+        const stats = this.getStats(data);
 
-    // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
-    const imageURL = await this.getImageFromWiki(data.name)
+        // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
+        const imageURL = await this.getImageFromWiki(data.name)
 
-    //const moves = await this.getPokemonMoves(pokemon);
+        //const moves = await this.getPokemonMoves(pokemon);
 
-    const res: pokemonInfo = {
-        name: data.name.toUpperCase(),
-        url: API_URL + '/' + pokemon,
-        types: types,
-        stats: stats,
-        image: imageURL,
-        moves: [],
+        const res: pokemonInfo = {
+            name: data.name.toUpperCase(),
+            url: API_URL + '/' + pokemon,
+            types: types,
+            stats: stats,
+            image: imageURL,
+            moves: [],
+        }
+        // eslint-disable-next-line no-console
+        console.log(res);
+        return res;
     }
-    // eslint-disable-next-line no-console
-    console.log(res);
-    return res;
-}
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-static async getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
-    const image_position = this.getImagePosition(front, female, shiny)
-    const result = await axios.get(API_URL + '/'+ name);
-    const data = await result.data;
-    return animated ? data['sprites']['versions'][generation[gen]][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][generation[gen]][game][imagePosition[image_position]];
-}
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    static async getPokemonSpeciesInfo(pokemon: string): Promise<pokemonID[]>{
+        const speciesInfo: pokemonID[] = [];
 
-static getTypes(data: any): string[] {
-    const types = [];
-    for(const type of data.types) {
-        types.push(type.type.name as string)
+        const result = await axios.get(API_URL + 'pokemon-species/'+ pokemon);
+        const data = await result.data;
+
+        const id = data.id;
+
+        const varieties = this.getVarieties(data);
+
+        for(const variety of varieties){
+            const varietyResult = await axios.get(variety);
+            const varietyData = await varietyResult.data;
+            const varietyInfo: pokemonID = {
+                name: varietyData.name,
+                url: variety,
+                id: id,
+            }
+            speciesInfo.push(varietyInfo)
+        }
+        // eslint-disable-next-line no-console
+        console.log(speciesInfo)
+        return speciesInfo;
     }
-    return types;
-}
 
-static getImagePosition(front: boolean, female: boolean, shiny: boolean): imagePosition{
-    switch(true){
-        case (front && female && shiny): {
-            return imagePosition.front_shiny_female;
-        }
-        case (front && !female && shiny): {
-            return imagePosition.front_shiny;
-        }
-        case (front && !female && !shiny): {
-            return imagePosition.front_default;
-        }
-        case (front && female && !shiny): {
-            return imagePosition.front_female;
-        }
-        case (!front && female && shiny): {
-            return imagePosition.back_shiny_female;
-        }
-        case (!front && !female && shiny): {
-            return imagePosition.back_shiny;
-        }
-        case (!front && !female && !shiny): {
-            return imagePosition.back_default;
-        }
-        case (!front && female && !shiny): {
-            return imagePosition.back_female;
-        }
-        default: return imagePosition.front_default;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    static async getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
+        const image_position = this.getImagePosition(front, female, shiny)
+        const result = await axios.get(API_URL + '/'+ name);
+        const data = await result.data;
+        return animated ? data['sprites']['versions'][generation[gen]][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][generation[gen]][game][imagePosition[image_position]];
     }
-}
 
-static getStats(data: any): pokemonStats {
-    const stats = {} as pokemonStats
-    for(const stat of data.stats){
-        switch(stat.stat.name){
-            case 'hp': {
-                stats.hp = stat.base_stat;
-                break;
-            }
-            case 'attack': {
-                stats.attack = stat.base_stat;
-                break;
-            }
-            case 'defense': {
-                stats.defense = stat.base_stat;
-                break;
-            }
-            case 'special-attack': {
-                stats.spAtk = stat.base_stat;
-                break;
-            }
-            case 'special-defense': {
-                stats.spDef = stat.base_stat;
-                break;
-            }
-            case 'speed': {
-                stats.speed = stat.base_stat;
-                break;
-            }
-            default: {
-                // eslint-disable-next-line no-console
-                console.error('ERROR: A not valid stat has been received.')
-            }
+    static getTypes(data: any): string[] {
+        const types = [];
+        for(const type of data.types) {
+            types.push(type.type.name as string)
         }
+        return types;
     }
-    return stats;
-}
 
-static async getImageFromWiki(pokemonName: string): Promise<string>{
-    let res = '';
-    let searchResult = await axios.get(WIKI_URL + pokemonName);
-    let html = searchResult.data;
-    let $ = cheerio.load(html)
-    const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
+    static getVarieties(data: any): string[] {
+        const varieties = [];
+        for(const variety of data.varieties) {
+            varieties.push(variety.pokemon.url as string)
+        }
+        return varieties;
+    }
 
-    if(pokemonURL){
-        searchResult = await axios.get(pokemonURL);
-        html = searchResult.data;
-        $ = cheerio.load(html)
-        const aux = $('figure.pi-image > a.image-thumbnail', html).first().attr('href');
-        if(aux){
-            res = aux;
+    static getImagePosition(front: boolean, female: boolean, shiny: boolean): imagePosition{
+        switch(true){
+            case (front && female && shiny): {
+                return imagePosition.front_shiny_female;
+            }
+            case (front && !female && shiny): {
+                return imagePosition.front_shiny;
+            }
+            case (front && !female && !shiny): {
+                return imagePosition.front_default;
+            }
+            case (front && female && !shiny): {
+                return imagePosition.front_female;
+            }
+            case (!front && female && shiny): {
+                return imagePosition.back_shiny_female;
+            }
+            case (!front && !female && shiny): {
+                return imagePosition.back_shiny;
+            }
+            case (!front && !female && !shiny): {
+                return imagePosition.back_default;
+            }
+            case (!front && female && !shiny): {
+                return imagePosition.back_female;
+            }
+            default: return imagePosition.front_default;
         }
     }
-    return res;
-}
+
+    static getStats(data: any): pokemonStats {
+        const stats = {} as pokemonStats
+        for(const stat of data.stats){
+            switch(stat.stat.name){
+                case 'hp': {
+                    stats.hp = stat.base_stat;
+                    break;
+                }
+                case 'attack': {
+                    stats.attack = stat.base_stat;
+                    break;
+                }
+                case 'defense': {
+                    stats.defense = stat.base_stat;
+                    break;
+                }
+                case 'special-attack': {
+                    stats.spAtk = stat.base_stat;
+                    break;
+                }
+                case 'special-defense': {
+                    stats.spDef = stat.base_stat;
+                    break;
+                }
+                case 'speed': {
+                    stats.speed = stat.base_stat;
+                    break;
+                }
+                default: {
+                    // eslint-disable-next-line no-console
+                    console.error('ERROR: A not valid stat has been received.')
+                }
+            }
+        }
+        return stats;
+    }
+
+    static async getImageFromWiki(pokemonName: string): Promise<string>{
+        let res = '';
+        let searchResult = await axios.get(WIKI_URL + pokemonName);
+        let html = searchResult.data;
+        let $ = cheerio.load(html)
+        const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
+
+        if(pokemonURL){
+            searchResult = await axios.get(pokemonURL);
+            html = searchResult.data;
+            $ = cheerio.load(html)
+            const aux = $('figure.pi-image > a.image-thumbnail', html).first().attr('href');
+            if(aux){
+                res = aux;
+            }
+        }
+        return res;
+    }
 
     static async getPokemonMoves(pokemon: any): Promise<any[]>{
         const movesByEdition: any[] = [];
@@ -195,7 +231,5 @@ static async getImageFromWiki(pokemonName: string): Promise<string>{
     }
 
 }
-/*getPokemonInfo('mudkip');
-getImageFromWiki("mudkip");*/
 
-
+Pokemon.getPokemonSpeciesInfo('oricorio')
