@@ -1,2 +1,3 @@
 - Search for pokemon with multiple forms (Lycanroc, Oricorio) and split forms
 - Add Hisuian pokémon and Alolan and Galarian forms
+- Get moves async

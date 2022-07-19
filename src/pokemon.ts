@@ -23,18 +23,18 @@ export class Pokemon {
         // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
         const imageURL = await this.getImageFromWiki(data.name)
 
-        //const moves = await this.getPokemonMoves(pokemon);
+        const moves = await this.getPokemonMoves(result);
 
         const res: pokemonInfo = {
             name: data.name.toUpperCase(),
-            url: API_URL + '/' + pokemon,
+            url: API_URL + pokemon,
             types: types,
             stats: stats,
             image: imageURL,
-            moves: [],
+            moves: moves,
         }
         // eslint-disable-next-line no-console
-        console.log(res);
+        console.log(JSON.stringify(res));
         return res;
     }
 
@@ -178,25 +178,23 @@ export class Pokemon {
 
     static async getPokemonMoves(pokemon: any): Promise<any[]>{
         const movesByEdition: any[] = [];
+        const editionList: string[] = [];
+        const res: any[] = [];
 
         //First, we obtain the pokémon with the list of moves it can learn
         const data = await pokemon.data;
 
         const moves = data.moves;
 
-        //console.log(moves[0].move.name);
         //For each move, we get its info and each version in which the pokémon can learn the move
         for(const move of moves) {
-            //console.log(move.move.name);
             const moveName = move.move.name;
             const editions = move.version_group_details;
             const moveURL = move.move.url;
-            // eslint-disable-next-line no-console
-            console.log(moveURL);
 
             //Now we are getting the move info
-            const moveInfo = await fetch(moveURL);
-            const moveData = await moveInfo.json();
+            const moveInfo = await axios.get(moveURL);
+            const moveData = await moveInfo.data;
 
             const description = moveData.effect_entries.effect;
             //If accuracy or power are null, it takes no effect on the move
@@ -204,8 +202,10 @@ export class Pokemon {
             const power = moveData.power == null ? "-" : moveData.power;
 
             editions.forEach((edition: any) => {
-                //console.log(edition.version_group.name);
                 const editionName = edition.version_group.name
+                if(!editionList.includes(editionName)){
+                    editionList.push(editionName)
+                }
                 const levelLearnt = edition.level_learned_at;
 
                 if (movesByEdition[editionName] == null) {
@@ -227,9 +227,19 @@ export class Pokemon {
                 }
             })
         }
-        return movesByEdition;
+        for(const edition of editionList){
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const editionMoves:any[] = movesByEdition[edition];
+            res.push({
+                edition: edition,
+                moves: editionMoves,
+            })
+
+        }
+        return res;
     }
 
 }
 
-Pokemon.getPokemonSpeciesInfo('oricorio')
+Pokemon.getPokemonInfo('venusaur')
