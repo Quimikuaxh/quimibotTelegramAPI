@@ -186,47 +186,30 @@ export class Pokemon {
 
         const moves = data.moves;
 
+        const promises = [];
+
         //For each move, we get its info and each version in which the pokémon can learn the move
         for(const move of moves) {
-            const moveName = move.move.name;
-            const editions = move.version_group_details;
             const moveURL = move.move.url;
 
-            //Now we are getting the move info
-            const moveInfo = await axios.get(moveURL);
-            const moveData = await moveInfo.data;
+            const moveName = move.move.name;
+            const editions = move.version_group_details;
 
-            const description = moveData.effect_entries.effect;
-            //If accuracy or power are null, it takes no effect on the move
-            const accuracy = moveData.accuracy == null ? "-" : moveData.accuracy;
-            const power = moveData.power == null ? "-" : moveData.power;
-
-            editions.forEach((edition: any) => {
-                const editionName = edition.version_group.name
-                if(!editionList.includes(editionName)){
-                    editionList.push(editionName)
-                }
-                const levelLearnt = edition.level_learned_at;
-
-                if (movesByEdition[editionName] == null) {
-                    movesByEdition[editionName] = [{
-                        "move": moveName,
-                        "levelLearnt": levelLearnt,
-                        "accuracy": accuracy,
-                        "power": power,
-                        "description": description
-                    }];
-                } else {
-                    movesByEdition[editionName].push({
-                        "move": moveName,
-                        "levelLearnt": levelLearnt,
-                        "accuracy": accuracy,
-                        "power": power,
-                        "description": description
-                    });
-                }
-            })
+            promises.push(this.createPokemonMove(moveName, editions, moveURL));
         }
+
+        const movesAfterPromise = await Promise.all(promises);
+        for (const move of movesAfterPromise){
+            for(const moveByEdition of move){
+                const edition = moveByEdition.edition;
+                if(!editionList.includes(edition)){
+                    editionList.push(edition);
+                    movesByEdition[edition] = []
+                }
+                movesByEdition[edition].push(moveByEdition.data);
+            }
+        }
+
         for(const edition of editionList){
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
@@ -235,8 +218,37 @@ export class Pokemon {
                 edition: edition,
                 moves: editionMoves,
             })
-
         }
+        return res;
+    }
+
+    // function used to get the moves asynchronously
+    static async createPokemonMove(name:string, editions: any, url: string): Promise<any[]>{
+        const res: any[] = [];
+        //Now we are getting the move info
+        const moveInfo = await axios.get(url);
+        const moveData = await moveInfo.data;
+
+        const description = moveData.effect_entries.effect;
+        //If accuracy or power are null, it takes no effect on the move
+        const accuracy = moveData.accuracy == null ? "-" : moveData.accuracy;
+        const power = moveData.power == null ? "-" : moveData.power;
+
+        editions.forEach((edition: any) => {
+            const editionName = edition.version_group.name
+            const levelLearnt = edition.level_learned_at;
+
+            res.push({
+                edition: editionName,
+                data: {
+                    "move": name,
+                    "levelLearnt": levelLearnt,
+                    "accuracy": accuracy,
+                    "power": power,
+                    "description": description
+                }
+            });
+        });
         return res;
     }
 
