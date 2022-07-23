@@ -5,16 +5,28 @@ import {imagePosition} from "./types/imagePosition";
 import {generation} from "./types/generation";
 import * as cheerio from "cheerio";
 import pokemonID from "./types/pokemonID";
-
-const API_URL = "https://pokeapi.co/api/v2/";
-const WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
+import {pokemonType_ES} from "./types/pokemonType_ES";
 
 export class Pokemon {
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    private static API_URL = "https://pokeapi.co/api/v2/";
+    private static WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
+    private static POKEMON_LIST_URL = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=9999";
+
+    static async getPokemonList(): Promise<string[]>{
+        const pokemonList:string[] = [];
+
+        const result = await axios.get(this.POKEMON_LIST_URL);
+        const data = await result.data;
+
+        for(const pokemon of data.results){
+            pokemonList.push(pokemon.name);
+        }
+        return pokemonList
+    }
+
     static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
-        const result = await axios.get(API_URL + 'pokemon/'+ pokemon);
+        const result = await axios.get(this.API_URL + 'pokemon/'+ pokemon);
         const data = await result.data;
 
         const types = this.getTypes(data);
@@ -25,17 +37,18 @@ export class Pokemon {
 
         const moves = await this.getPokemonMoves(result);
 
-        const res: pokemonInfo = {
+        return {
             name: data.name.toUpperCase(),
-            url: API_URL + pokemon,
+            url: this.API_URL + pokemon,
             types: types,
             stats: stats,
             image: imageURL,
             moves: moves,
-        }
-        // eslint-disable-next-line no-console
-        console.log(JSON.stringify(res));
-        return res;
+        };
+    }
+
+    static translateType(type:string): string{
+        return pokemonType_ES[type.toUpperCase() as keyof typeof pokemonType_ES];
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -43,7 +56,7 @@ export class Pokemon {
     static async getPokemonSpeciesInfo(pokemon: string): Promise<pokemonID[]>{
         const speciesInfo: pokemonID[] = [];
 
-        const result = await axios.get(API_URL + 'pokemon-species/'+ pokemon);
+        const result = await axios.get(this.API_URL + 'pokemon-species/'+ pokemon);
         const data = await result.data;
 
         const id = data.id;
@@ -65,11 +78,10 @@ export class Pokemon {
         return speciesInfo;
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    static async getImageURL(name: string, gen: number, game: string, animated: boolean, front: boolean, female: boolean, shiny: boolean): Promise<string>{
+    static async getImageURL(name: string, gen: number, game: string, animated: boolean,
+                             front: boolean, female: boolean, shiny: boolean): Promise<string>{
         const image_position = this.getImagePosition(front, female, shiny)
-        const result = await axios.get(API_URL + '/'+ name);
+        const result = await axios.get(this.API_URL + '/'+ name);
         const data = await result.data;
         return animated ? data['sprites']['versions'][generation[gen]][game]['animated'][imagePosition[image_position]] : data['sprites']['versions'][generation[gen]][game][imagePosition[image_position]];
     }
@@ -159,7 +171,7 @@ export class Pokemon {
 
     static async getImageFromWiki(pokemonName: string): Promise<string>{
         let res = '';
-        let searchResult = await axios.get(WIKI_URL + pokemonName);
+        let searchResult = await axios.get(this.WIKI_URL + pokemonName);
         let html = searchResult.data;
         let $ = cheerio.load(html)
         const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
@@ -195,7 +207,7 @@ export class Pokemon {
             const moveName = move.move.name;
             const editions = move.version_group_details;
 
-            promises.push(this.createPokemonMove(moveName, editions, moveURL));
+            promises.push(this.getAsyncPokemonMove(moveName, editions, moveURL));
         }
 
         const movesAfterPromise = await Promise.all(promises);
@@ -223,7 +235,7 @@ export class Pokemon {
     }
 
     // function used to get the moves asynchronously
-    static async createPokemonMove(name:string, editions: any, url: string): Promise<any[]>{
+    static async getAsyncPokemonMove(name:string, editions: any, url: string): Promise<any[]>{
         const res: any[] = [];
         //Now we are getting the move info
         const moveInfo = await axios.get(url);
@@ -253,5 +265,3 @@ export class Pokemon {
     }
 
 }
-
-Pokemon.getPokemonInfo('venusaur')
