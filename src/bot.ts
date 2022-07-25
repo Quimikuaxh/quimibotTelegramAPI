@@ -58,7 +58,19 @@ bot.onText(/\/pokemon/, async (msg) => {
     }catch(e){
         // eslint-disable-next-line no-console
         console.error(e)
-        bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.")
+        bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.");
     }
+})
+
+bot.onText(/\/team/, async (msg) => {
+    const chatId = msg.chat.id
+    const messageText = msg.text;
+
+    const team = messageText?.replace("/team", "").trim() as string;
+
+    const parsedTeam = Pokemon.createPokePasteInput(team);
+    const teamURL = await Pokemon.createPokePaste(parsedTeam);
+
+    bot.sendMessage(chatId, "Here is your saved team in PokePaste "+String.fromCodePoint(0x1F601)+": "+ teamURL)
 })
 

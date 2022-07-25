@@ -6,12 +6,14 @@ import {generation} from "./types/generation";
 import * as cheerio from "cheerio";
 import pokemonID from "./types/pokemonID";
 import {pokemonType_ES} from "./types/pokemonType_ES";
+import {Utils} from "./utils/utils"
 
 export class Pokemon {
 
     private static API_URL = "https://pokeapi.co/api/v2/";
     private static WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
     private static POKEMON_LIST_URL = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=9999";
+    private static POKEPASTE_URL = "https://pokepast.es/create";
 
     static async getPokemonList(): Promise<string[]>{
         const pokemonList:string[] = [];
@@ -167,6 +169,21 @@ export class Pokemon {
             }
         }
         return stats;
+    }
+
+    static createPokePasteInput(team:string): string{
+        const encodedTeam = Utils.encodeTeam(team);
+        return `paste=${encodedTeam}&title=Prueba&author=Quimibot&notes=Notas`
+    }
+
+    static async createPokePaste(input: string): Promise<string>{
+        const searchResult = await axios({
+            method: 'post',
+            url: this.POKEPASTE_URL,
+            data: input
+        });
+
+        return `${searchResult.request.protocol}//${searchResult.request.host}${searchResult.request.path}` as string;
     }
 
     static async getImageFromWiki(pokemonName: string): Promise<string>{
