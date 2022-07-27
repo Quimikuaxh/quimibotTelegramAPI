@@ -1,2 +1,3 @@
 - Search for pokemon with multiple forms (Lycanroc, Oricorio, Castform) and split forms
 - Add Hisuian pokémon and Alolan and Galarian forms
+- Control team formats

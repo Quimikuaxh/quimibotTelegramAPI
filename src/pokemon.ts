@@ -280,5 +280,184 @@ export class Pokemon {
         });
         return res;
     }
+    static parseTeam(team: string){
+        const pokemonList: string[] = team.trim().split('\n\n');
+        const pokemonParsedTeam: any[] = [];
+        console.log
+        for(const pokemon of pokemonList){
+            const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
+            const pokemonParsed = {};
 
+            //console.log('---------------------------------------------')
+            //console.log(pokemon);
+            // first row
+            //console.log(pokemonRows);
+            if(pokemonRows[0].includes('(')){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonParsed['name'] = pokemonRows[0].split('(')[0].trim();
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonParsed['gender'] = pokemonRows[0].split('(')[1].includes('M') ? 'male' : 'female'
+            }
+            else if(pokemonRows[0].includes('@')){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonParsed['name'] = pokemonRows[0].split('@')[0].trim();
+            }
+            else{
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonParsed['name'] = pokemonRows[0].trim();
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            pokemonParsed['item'] = pokemonRows[0].includes('@') ? pokemonRows[0].split('@')[1].trim() : undefined;
+
+            // the rest of the rows
+            if(pokemonRows.length > 1){
+                const moves: string[] = [];
+                for(let i = 1; i<pokemonRows.length; i++){
+                    //console.log(pokemon[i])
+                    if(pokemonRows[i].startsWith('Ability:')){
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        pokemonParsed['ability'] = pokemonRows[i].replace('Ability: ', '').trim();
+                    }
+                    else if(pokemonRows[i].startsWith('Level:')){
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        pokemonParsed['level'] = pokemonRows[i].replace('Ability: ', '').trim();
+                    }
+                    else if(pokemonRows[i].startsWith('EVs:')){
+                        const evs:pokemonStats = {
+                            hp: 0,
+                            attack: 0,
+                            defense: 0,
+                            spAtk: 0,
+                            spDef: 0,
+                            speed: 0
+                        };
+                        const splitEvs = pokemonRows[i].replace('EVs: ', '').trim().split('/').map(ev => ev.trim());
+                        for(const ev of splitEvs){
+                            if(ev.includes('HP')){
+                                evs.hp = Number(ev.replace('HP', '').trim())
+                            }
+                            else if(ev.includes('Atk')){
+                                evs.attack = Number(ev.replace('Atk', '').trim())
+                            }
+                            else if(ev.includes('Def')){
+                                evs.defense = Number(ev.replace('Def', '').trim())
+                            }
+                            else if(ev.includes('SpA')){
+                                evs.spAtk = Number(ev.replace('SpA', '').trim())
+                            }
+                            else if(ev.includes('SpD')){
+                                evs.spDef = Number(ev.replace('SpD', '').trim())
+                            }
+                            else if(ev.includes('Spe')){
+                                evs.speed = Number(ev.replace('Spe', '').trim())
+                            }
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore
+                            pokemonParsed['EVs'] = evs;
+                        }
+                    }
+                    else if(pokemonRows[i].includes('Nature')){
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        pokemonParsed['nature'] = pokemonRows[i].replace('Nature: ', '').trim();
+                    }
+                    else if(pokemonRows[i].startsWith('IVs:')){
+                        const ivs:pokemonStats = {
+                            hp: 31,
+                            attack: 31,
+                            defense: 31,
+                            spAtk: 31,
+                            spDef: 31,
+                            speed: 31
+                        };
+                        const splitIvs = pokemonRows[i].replace('IVs: ', '').trim().split('/').map(ev => ev.trim());
+                        for(const iv of splitIvs){
+                            if(iv.includes('HP')){
+                                ivs.hp = Number(iv.replace('HP', '').trim())
+                            }
+                            else if(iv.includes('Atk')){
+                                ivs.attack = Number(iv.replace('Atk', '').trim())
+                            }
+                            else if(iv.includes('Def')){
+                                ivs.defense = Number(iv.replace('Def', '').trim())
+                            }
+                            else if(iv.includes('SpA')){
+                                ivs.spAtk = Number(iv.replace('SpA', '').trim())
+                            }
+                            else if(iv.includes('SpD')){
+                                ivs.spDef = Number(iv.replace('SpD', '').trim())
+                            }
+                            else if(iv.includes('Spe')){
+                                ivs.speed = Number(iv.replace('Spe', '').trim())
+                            }
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        pokemonParsed['IVs'] = ivs;
+                    }
+                    else if(pokemonRows[i].startsWith('-')){
+                        moves.push(pokemonRows[i].replace('- ', '').trim());
+                    }
+                }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonParsed['moves'] = moves;
+            }
+            // eslint-disable-next-line no-console
+            console.log(JSON.stringify(pokemonParsed));
+            pokemonParsedTeam.push(pokemonParsed);
+        }
+        return pokemonParsedTeam;
+    }
 }
+
+Pokemon.parseTeam("Barraskewda (M) @ Aguav Berry  \n" +
+    "Ability: Swift Swim  \n" +
+    "Level: 96  \n" +
+    "Shiny: Yes  \n" +
+    "EVs: 40 HP / 48 Atk / 52 Def / 36 SpA / 48 SpD / 72 Spe  \n" +
+    "Naughty Nature  \n" +
+    "IVs: 29 HP / 29 Atk / 29 Def / 29 SpA / 0 SpD  \n" +
+    "- Agility  \n" +
+    "- Aqua Jet  \n" +
+    "- Brick Break  \n" +
+    "- Close Combat  \n" +
+    "\n" +
+    "Bisharp  \n" +
+    "Ability: Defiant  \n" +
+    "\n" +
+    "Landorus-Therian @ Heavy-Duty Boots  \n" +
+    "Ability: Intimidate  \n" +
+    "Level: 97  \n" +
+    "Shiny: Yes  \n" +
+    "EVs: 148 HP / 48 Def  \n" +
+    "Relaxed Nature  \n" +
+    "- U-turn  \n" +
+    "- Calm Mind  \n" +
+    "\n" +
+    "Urshifu-Rapid-Strike @ Assault Vest  \n" +
+    "Ability: Unseen Fist  \n" +
+    "EVs: 36 HP / 20 Atk / 32 Def / 40 SpA / 56 SpD / 48 Spe  \n" +
+    "Naughty Nature  \n" +
+    "IVs: 29 HP / 28 Atk / 28 Def / 28 SpA / 30 SpD / 28 Spe  \n" +
+    "- Fire Punch  \n" +
+    "- Brick Break  \n" +
+    "- Body Slam  \n" +
+    "- Body Press  \n" +
+    "\n" +
+    "Regidrago @ Choice Band  \n" +
+    "Ability: Dragon's Maw  \n" +
+    "- Crunch  \n" +
+    "- Dragon Energy  \n" +
+    "\n" +
+    "Rockruff  \n" +
+    "Ability: Own Tempo  \n" +
+    "IVs: 0 Atk  \n" +
+    "\n")
