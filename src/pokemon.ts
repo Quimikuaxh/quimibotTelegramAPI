@@ -7,6 +7,7 @@ import * as cheerio from "cheerio";
 import pokemonID from "./types/pokemonID";
 import {pokemonType_ES} from "./types/pokemonType_ES";
 import {Utils} from "./utils/utils"
+import pokemonShowdown from "./types/pokemonShowdown";
 
 export class Pokemon {
 
@@ -280,141 +281,126 @@ export class Pokemon {
         });
         return res;
     }
-    static parseTeam(team: string){
+    static parseTeam(team: string): pokemonShowdown[]{
         const pokemonList: string[] = team.trim().split('\n\n');
-        const pokemonParsedTeam: any[] = [];
-        console.log
+        const pokemonParsedTeam: pokemonShowdown[] = [];
+
         for(const pokemon of pokemonList){
             const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
-            const pokemonParsed = {};
+            const pokemonParsed:pokemonShowdown = {
+                name: "Missigno",
+                shiny: false,
+                level: "100",
+            };
 
-            //console.log('---------------------------------------------')
-            //console.log(pokemon);
-            // first row
-            //console.log(pokemonRows);
+            let evs:pokemonStats = {
+                hp: 0,
+                attack: 0,
+                defense: 0,
+                spAtk: 0,
+                spDef: 0,
+                speed: 0
+            };
+            let ivs:pokemonStats = {
+                hp: 31,
+                attack: 31,
+                defense: 31,
+                spAtk: 31,
+                spDef: 31,
+                speed: 31
+            };
+
+            // First row
             if(pokemonRows[0].includes('(')){
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                pokemonParsed['name'] = pokemonRows[0].split('(')[0].trim();
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                pokemonParsed['gender'] = pokemonRows[0].split('(')[1].includes('M') ? 'male' : 'female'
+                pokemonParsed.name = pokemonRows[0].split('(')[0].trim();
+                pokemonParsed.gender = pokemonRows[0].split('(')[1].includes('M') ? 'male' : 'female'
             }
             else if(pokemonRows[0].includes('@')){
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                pokemonParsed['name'] = pokemonRows[0].split('@')[0].trim();
+                pokemonParsed.name = pokemonRows[0].split('@')[0].trim();
             }
             else{
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                pokemonParsed['name'] = pokemonRows[0].trim();
+                pokemonParsed.name = pokemonRows[0].trim();
             }
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            pokemonParsed['item'] = pokemonRows[0].includes('@') ? pokemonRows[0].split('@')[1].trim() : undefined;
+            pokemonParsed.item = pokemonRows[0].includes('@') ? pokemonRows[0].split('@')[1].trim() : undefined;
 
-            // the rest of the rows
+            // The rest of the rows
             if(pokemonRows.length > 1){
                 const moves: string[] = [];
                 for(let i = 1; i<pokemonRows.length; i++){
-                    //console.log(pokemon[i])
                     if(pokemonRows[i].startsWith('Ability:')){
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        pokemonParsed['ability'] = pokemonRows[i].replace('Ability: ', '').trim();
+                        pokemonParsed.ability = pokemonRows[i].replace('Ability: ', '').trim();
                     }
                     else if(pokemonRows[i].startsWith('Level:')){
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        pokemonParsed['level'] = pokemonRows[i].replace('Ability: ', '').trim();
+                        pokemonParsed.level = pokemonRows[i].replace('Level: ', '').trim();
                     }
                     else if(pokemonRows[i].startsWith('EVs:')){
-                        const evs:pokemonStats = {
-                            hp: 0,
-                            attack: 0,
-                            defense: 0,
-                            spAtk: 0,
-                            spDef: 0,
-                            speed: 0
-                        };
                         const splitEvs = pokemonRows[i].replace('EVs: ', '').trim().split('/').map(ev => ev.trim());
-                        for(const ev of splitEvs){
-                            if(ev.includes('HP')){
-                                evs.hp = Number(ev.replace('HP', '').trim())
-                            }
-                            else if(ev.includes('Atk')){
-                                evs.attack = Number(ev.replace('Atk', '').trim())
-                            }
-                            else if(ev.includes('Def')){
-                                evs.defense = Number(ev.replace('Def', '').trim())
-                            }
-                            else if(ev.includes('SpA')){
-                                evs.spAtk = Number(ev.replace('SpA', '').trim())
-                            }
-                            else if(ev.includes('SpD')){
-                                evs.spDef = Number(ev.replace('SpD', '').trim())
-                            }
-                            else if(ev.includes('Spe')){
-                                evs.speed = Number(ev.replace('Spe', '').trim())
-                            }
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore
-                            pokemonParsed['EVs'] = evs;
-                        }
+                        evs = this.getEVsIVs(splitEvs, true);
                     }
                     else if(pokemonRows[i].includes('Nature')){
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        pokemonParsed['nature'] = pokemonRows[i].replace('Nature: ', '').trim();
+                        pokemonParsed.nature = pokemonRows[i].replace('Nature: ', '').trim();
                     }
                     else if(pokemonRows[i].startsWith('IVs:')){
-                        const ivs:pokemonStats = {
-                            hp: 31,
-                            attack: 31,
-                            defense: 31,
-                            spAtk: 31,
-                            spDef: 31,
-                            speed: 31
-                        };
                         const splitIvs = pokemonRows[i].replace('IVs: ', '').trim().split('/').map(ev => ev.trim());
-                        for(const iv of splitIvs){
-                            if(iv.includes('HP')){
-                                ivs.hp = Number(iv.replace('HP', '').trim())
-                            }
-                            else if(iv.includes('Atk')){
-                                ivs.attack = Number(iv.replace('Atk', '').trim())
-                            }
-                            else if(iv.includes('Def')){
-                                ivs.defense = Number(iv.replace('Def', '').trim())
-                            }
-                            else if(iv.includes('SpA')){
-                                ivs.spAtk = Number(iv.replace('SpA', '').trim())
-                            }
-                            else if(iv.includes('SpD')){
-                                ivs.spDef = Number(iv.replace('SpD', '').trim())
-                            }
-                            else if(iv.includes('Spe')){
-                                ivs.speed = Number(iv.replace('Spe', '').trim())
-                            }
-                        }
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        pokemonParsed['IVs'] = ivs;
+                        ivs = this.getEVsIVs(splitIvs, true);
                     }
                     else if(pokemonRows[i].startsWith('-')){
                         moves.push(pokemonRows[i].replace('- ', '').trim());
                     }
                 }
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                pokemonParsed['moves'] = moves;
+                pokemonParsed.moves = moves;
+                pokemonParsed.IVs = ivs;
+                pokemonParsed.EVs = evs;
             }
-            // eslint-disable-next-line no-console
-            console.log(JSON.stringify(pokemonParsed));
             pokemonParsedTeam.push(pokemonParsed);
         }
+        // eslint-disable-next-line no-console
+        console.log(pokemonParsedTeam)
         return pokemonParsedTeam;
+    }
+    static getEVsIVs(evsivs: string[], isEvs: boolean): pokemonStats{
+        let res: pokemonStats;
+        if(isEvs){
+            res = {
+                hp: 0,
+                attack: 0,
+                defense: 0,
+                spAtk: 0,
+                spDef: 0,
+                speed: 0
+            };
+        }
+        else{
+            res = {
+                hp: 31,
+                attack: 31,
+                defense: 31,
+                spAtk: 31,
+                spDef: 31,
+                speed: 31
+            };
+        }
+        for(const iv of evsivs){
+            if(iv.includes('HP')){
+                res.hp = Number(iv.replace('HP', '').trim())
+            }
+            else if(iv.includes('Atk')){
+                res.attack = Number(iv.replace('Atk', '').trim())
+            }
+            else if(iv.includes('Def')){
+                res.defense = Number(iv.replace('Def', '').trim())
+            }
+            else if(iv.includes('SpA')){
+                res.spAtk = Number(iv.replace('SpA', '').trim())
+            }
+            else if(iv.includes('SpD')){
+                res.spDef = Number(iv.replace('SpD', '').trim())
+            }
+            else if(iv.includes('Spe')){
+                res.speed = Number(iv.replace('Spe', '').trim())
+            }
+        }
+        return res;
     }
 }
 
