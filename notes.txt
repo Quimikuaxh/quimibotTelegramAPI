@@ -3,3 +3,5 @@
 - Control team formats
 - Try/catch al parse
 - Cuadrícula de equipo pokemon
+
+Revisar pokemon con nombres raros

@@ -8,6 +8,8 @@ import pokemonID from "./types/pokemonID";
 import {pokemonType_ES} from "./types/pokemonType_ES";
 import {Utils} from "./utils/utils"
 import pokemonShowdown from "./types/pokemonShowdown";
+import pokemonMove from "./types/pokemonMove";
+import fs from "fs";
 
 export class Pokemon {
 
@@ -56,29 +58,60 @@ export class Pokemon {
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    static async getPokemonSpeciesInfo(pokemon: string): Promise<pokemonID[]>{
-        const speciesInfo: pokemonID[] = [];
+    static async getPokemonSpeciesInfo(): Promise<any>{
+        const res = {};
+        const pokemonLeft: string[] = [];
+        for(let i = 1; i<905; i++){ //905
+            // eslint-disable-next-line no-console
+            console.log("Calculating pokémon number "+i);
+            const speciesInfo: pokemonID[] = [];
 
-        const result = await axios.get(this.API_URL + 'pokemon-species/'+ pokemon);
-        const data = await result.data;
+            const result = await axios.get(this.API_URL + 'pokemon-species/'+ i.toString());
+            const data = await result.data;
 
-        const id = data.id;
+            const id = data.id;
 
-        const varieties = this.getVarieties(data);
+            const varieties = this.getVarieties(data);
 
-        for(const variety of varieties){
-            const varietyResult = await axios.get(variety);
-            const varietyData = await varietyResult.data;
-            const varietyInfo: pokemonID = {
-                name: varietyData.name,
-                url: variety,
-                id: id,
+            if(varieties.length < 6){
+                for(const variety of varieties){
+                    const varietyResult = await axios.get(variety);
+                    const varietyData = await varietyResult.data;
+                    const varietyInfo: pokemonID = {
+                        name: varietyData.name,
+                        url: variety,
+                        id: id,
+                    }
+                    speciesInfo.push(varietyInfo)
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    res[varietyData.name] = varietyData.name;
+                }
             }
-            speciesInfo.push(varietyInfo)
+            else{
+                pokemonLeft.push(data.name);
+            }
         }
+
         // eslint-disable-next-line no-console
-        console.log(speciesInfo)
-        return speciesInfo;
+        console.log("Faltan: \n");
+        for(const pokemon of pokemonLeft){
+            // eslint-disable-next-line no-console
+            console.log(`- ${pokemon} \n`)
+        }
+
+        const jsonContent = JSON.stringify(res);
+
+        fs.writeFile("./pokemon.json", jsonContent, 'utf8', function (err) {
+            if (err) {
+                // eslint-disable-next-line no-console
+                return console.log(err);
+            }
+
+            // eslint-disable-next-line no-console
+            console.log("The file was saved!");
+        });
+        return res;
     }
 
     static async getImageURL(name: string, gen: number, game: string, animated: boolean,
@@ -234,8 +267,12 @@ export class Pokemon {
                 const edition = moveByEdition.edition;
                 if(!editionList.includes(edition)){
                     editionList.push(edition);
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     movesByEdition[edition] = []
                 }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 movesByEdition[edition].push(moveByEdition.data);
             }
         }
@@ -243,7 +280,7 @@ export class Pokemon {
         for(const edition of editionList){
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            const editionMoves:any[] = movesByEdition[edition];
+            const editionMoves:pokemonMove[] = movesByEdition[edition];
             res.push({
                 edition: edition,
                 moves: editionMoves,
@@ -253,16 +290,16 @@ export class Pokemon {
     }
 
     // function used to get the moves asynchronously
-    static async getAsyncPokemonMove(name:string, editions: any, url: string): Promise<any[]>{
-        const res: any[] = [];
+    static async getAsyncPokemonMove(name:string, editions: any, url: string): Promise<pokemonMove[]>{
+        const res: pokemonMove[] = [];
         //Now we are getting the move info
         const moveInfo = await axios.get(url);
         const moveData = await moveInfo.data;
 
         const description = moveData.effect_entries.effect;
         //If accuracy or power are null, it takes no effect on the move
-        const accuracy = moveData.accuracy == null ? "-" : moveData.accuracy;
-        const power = moveData.power == null ? "-" : moveData.power;
+        const accuracy = moveData.accuracy == null ? undefined : moveData.accuracy;
+        const power = moveData.power == null ? undefined : moveData.power;
 
         editions.forEach((edition: any) => {
             const editionName = edition.version_group.name
@@ -282,81 +319,88 @@ export class Pokemon {
         return res;
     }
     static parseTeam(team: string): pokemonShowdown[]{
-        const pokemonList: string[] = team.trim().split('\n\n');
-        const pokemonParsedTeam: pokemonShowdown[] = [];
+        try{
+            const pokemonList: string[] = team.trim().split('\n\n');
+            const pokemonParsedTeam: pokemonShowdown[] = [];
 
-        for(const pokemon of pokemonList){
-            const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
-            const pokemonParsed:pokemonShowdown = {
-                name: "Missigno",
-                shiny: false,
-                level: "100",
-            };
+            for(const pokemon of pokemonList){
+                const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
+                const pokemonParsed:pokemonShowdown = {
+                    name: "Missigno",
+                    shiny: false,
+                    level: "100",
+                };
 
-            let evs:pokemonStats = {
-                hp: 0,
-                attack: 0,
-                defense: 0,
-                spAtk: 0,
-                spDef: 0,
-                speed: 0
-            };
-            let ivs:pokemonStats = {
-                hp: 31,
-                attack: 31,
-                defense: 31,
-                spAtk: 31,
-                spDef: 31,
-                speed: 31
-            };
+                let evs:pokemonStats = {
+                    hp: 0,
+                    attack: 0,
+                    defense: 0,
+                    spAtk: 0,
+                    spDef: 0,
+                    speed: 0
+                };
+                let ivs:pokemonStats = {
+                    hp: 31,
+                    attack: 31,
+                    defense: 31,
+                    spAtk: 31,
+                    spDef: 31,
+                    speed: 31
+                };
 
-            // First row
-            if(pokemonRows[0].includes('(')){
-                pokemonParsed.name = pokemonRows[0].split('(')[0].trim();
-                pokemonParsed.gender = pokemonRows[0].split('(')[1].includes('M') ? 'male' : 'female'
-            }
-            else if(pokemonRows[0].includes('@')){
-                pokemonParsed.name = pokemonRows[0].split('@')[0].trim();
-            }
-            else{
-                pokemonParsed.name = pokemonRows[0].trim();
-            }
-            pokemonParsed.item = pokemonRows[0].includes('@') ? pokemonRows[0].split('@')[1].trim() : undefined;
-
-            // The rest of the rows
-            if(pokemonRows.length > 1){
-                const moves: string[] = [];
-                for(let i = 1; i<pokemonRows.length; i++){
-                    if(pokemonRows[i].startsWith('Ability:')){
-                        pokemonParsed.ability = pokemonRows[i].replace('Ability: ', '').trim();
-                    }
-                    else if(pokemonRows[i].startsWith('Level:')){
-                        pokemonParsed.level = pokemonRows[i].replace('Level: ', '').trim();
-                    }
-                    else if(pokemonRows[i].startsWith('EVs:')){
-                        const splitEvs = pokemonRows[i].replace('EVs: ', '').trim().split('/').map(ev => ev.trim());
-                        evs = this.getEVsIVs(splitEvs, true);
-                    }
-                    else if(pokemonRows[i].includes('Nature')){
-                        pokemonParsed.nature = pokemonRows[i].replace('Nature: ', '').trim();
-                    }
-                    else if(pokemonRows[i].startsWith('IVs:')){
-                        const splitIvs = pokemonRows[i].replace('IVs: ', '').trim().split('/').map(ev => ev.trim());
-                        ivs = this.getEVsIVs(splitIvs, true);
-                    }
-                    else if(pokemonRows[i].startsWith('-')){
-                        moves.push(pokemonRows[i].replace('- ', '').trim());
-                    }
+                // First row
+                if(pokemonRows[0].includes('(')){
+                    pokemonParsed.name = pokemonRows[0].split('(')[0].trim();
+                    pokemonParsed.gender = pokemonRows[0].split('(')[1].includes('M') ? 'male' : 'female'
                 }
-                pokemonParsed.moves = moves;
-                pokemonParsed.IVs = ivs;
-                pokemonParsed.EVs = evs;
+                else if(pokemonRows[0].includes('@')){
+                    pokemonParsed.name = pokemonRows[0].split('@')[0].trim();
+                }
+                else{
+                    pokemonParsed.name = pokemonRows[0].trim();
+                }
+                pokemonParsed.item = pokemonRows[0].includes('@') ? pokemonRows[0].split('@')[1].trim() : undefined;
+
+                // The rest of the rows
+                if(pokemonRows.length > 1){
+                    const moves: string[] = [];
+                    for(let i = 1; i<pokemonRows.length; i++){
+                        if(pokemonRows[i].startsWith('Ability:')){
+                            pokemonParsed.ability = pokemonRows[i].replace('Ability: ', '').trim();
+                        }
+                        else if(pokemonRows[i].startsWith('Level:')){
+                            pokemonParsed.level = pokemonRows[i].replace('Level: ', '').trim();
+                        }
+                        else if(pokemonRows[i].startsWith('EVs:')){
+                            const splitEvs = pokemonRows[i].replace('EVs: ', '').trim().split('/').map(ev => ev.trim());
+                            evs = this.getEVsIVs(splitEvs, true);
+                        }
+                        else if(pokemonRows[i].includes('Nature')){
+                            pokemonParsed.nature = pokemonRows[i].replace('Nature: ', '').trim();
+                        }
+                        else if(pokemonRows[i].startsWith('IVs:')){
+                            const splitIvs = pokemonRows[i].replace('IVs: ', '').trim().split('/').map(ev => ev.trim());
+                            ivs = this.getEVsIVs(splitIvs, true);
+                        }
+                        else if(pokemonRows[i].startsWith('-')){
+                            moves.push(pokemonRows[i].replace('- ', '').trim());
+                        }
+                    }
+                    pokemonParsed.moves = moves;
+                    pokemonParsed.IVs = ivs;
+                    pokemonParsed.EVs = evs;
+                }
+                pokemonParsedTeam.push(pokemonParsed);
             }
-            pokemonParsedTeam.push(pokemonParsed);
+            // eslint-disable-next-line no-console
+            console.log(pokemonParsedTeam)
+            return pokemonParsedTeam;
+        }catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(e)
+            throw e;
         }
-        // eslint-disable-next-line no-console
-        console.log(pokemonParsedTeam)
-        return pokemonParsedTeam;
+
     }
     static getEVsIVs(evsivs: string[], isEvs: boolean): pokemonStats{
         let res: pokemonStats;
@@ -404,46 +448,4 @@ export class Pokemon {
     }
 }
 
-Pokemon.parseTeam("Barraskewda (M) @ Aguav Berry  \n" +
-    "Ability: Swift Swim  \n" +
-    "Level: 96  \n" +
-    "Shiny: Yes  \n" +
-    "EVs: 40 HP / 48 Atk / 52 Def / 36 SpA / 48 SpD / 72 Spe  \n" +
-    "Naughty Nature  \n" +
-    "IVs: 29 HP / 29 Atk / 29 Def / 29 SpA / 0 SpD  \n" +
-    "- Agility  \n" +
-    "- Aqua Jet  \n" +
-    "- Brick Break  \n" +
-    "- Close Combat  \n" +
-    "\n" +
-    "Bisharp  \n" +
-    "Ability: Defiant  \n" +
-    "\n" +
-    "Landorus-Therian @ Heavy-Duty Boots  \n" +
-    "Ability: Intimidate  \n" +
-    "Level: 97  \n" +
-    "Shiny: Yes  \n" +
-    "EVs: 148 HP / 48 Def  \n" +
-    "Relaxed Nature  \n" +
-    "- U-turn  \n" +
-    "- Calm Mind  \n" +
-    "\n" +
-    "Urshifu-Rapid-Strike @ Assault Vest  \n" +
-    "Ability: Unseen Fist  \n" +
-    "EVs: 36 HP / 20 Atk / 32 Def / 40 SpA / 56 SpD / 48 Spe  \n" +
-    "Naughty Nature  \n" +
-    "IVs: 29 HP / 28 Atk / 28 Def / 28 SpA / 30 SpD / 28 Spe  \n" +
-    "- Fire Punch  \n" +
-    "- Brick Break  \n" +
-    "- Body Slam  \n" +
-    "- Body Press  \n" +
-    "\n" +
-    "Regidrago @ Choice Band  \n" +
-    "Ability: Dragon's Maw  \n" +
-    "- Crunch  \n" +
-    "- Dragon Energy  \n" +
-    "\n" +
-    "Rockruff  \n" +
-    "Ability: Own Tempo  \n" +
-    "IVs: 0 Atk  \n" +
-    "\n")
+Pokemon.getPokemonSpeciesInfo();

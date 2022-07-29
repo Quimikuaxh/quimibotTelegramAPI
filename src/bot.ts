@@ -68,9 +68,14 @@ bot.onText(/\/team/, async (msg) => {
 
     const team = messageText?.replace("/team", "").trim() as string;
 
-    const parsedTeam = Pokemon.createPokePasteInput(team);
-    const teamURL = await Pokemon.createPokePaste(parsedTeam);
+    try{
+        Pokemon.parseTeam(team);
+        const parsedTeamForPokePaste = Pokemon.createPokePasteInput(team);
+        const teamURL = await Pokemon.createPokePaste(parsedTeamForPokePaste);
 
-    bot.sendMessage(chatId, "Here is your saved team in PokePaste "+String.fromCodePoint(0x1F601)+": "+ teamURL)
+        bot.sendMessage(chatId, "Here is your saved team in PokePaste "+String.fromCodePoint(0x1F601)+": "+ teamURL);
+    }catch{
+        bot.sendMessage(chatId, "Could not parse your team.");
+    }
 })
 
