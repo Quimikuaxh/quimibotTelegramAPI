@@ -447,5 +447,3 @@ export class Pokemon {
         return res;
     }
 }
-
-Pokemon.getPokemonSpeciesInfo();

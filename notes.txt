@@ -1,7 +1,11 @@
-- Search for pokemon with multiple forms (Lycanroc, Oricorio, Castform) and split forms
-- Add Hisuian pokémon and Alolan and Galarian forms
-- Control team formats
-- Try/catch al parse
+- Search for pokemon with multiple forms (Lycanroc, Oricorio, Greninja-Ash, Darmanitan) and split forms
 - Cuadrícula de equipo pokemon
+- Login usando el usuario de telegram, contraseña por chat
 
+Buscar fotos de los pokes que faltan (multiforma, Hisui, Alola, Galar, mega, gigamax)
+Revisar Greninja Battle Bond, Zygarde Power Construct, Rockruff Own Tempo
+Meter los Furfrou, Vivillon, Alcremie
 Revisar pokemon con nombres raros
+Stats:
+    HP = floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + Level + 10
+    Other Stats = (floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + 5) x Nature (nature is +- 10%)
