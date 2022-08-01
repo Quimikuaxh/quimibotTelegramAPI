@@ -42,7 +42,7 @@ export class Pokemon {
 
         const moves = await this.getPokemonMoves(result);
 
-        return {
+        const res = {
             name: data.name.toUpperCase(),
             url: this.API_URL + pokemon,
             types: types,
@@ -50,6 +50,9 @@ export class Pokemon {
             image: imageURL,
             moves: moves,
         };
+        // eslint-disable-next-line no-console
+        console.log(JSON.stringify(res));
+        return res;
     }
 
     static translateType(type:string): string{

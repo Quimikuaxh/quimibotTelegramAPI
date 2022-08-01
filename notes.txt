@@ -4,8 +4,6 @@
 
 Buscar fotos de los pokes que faltan (multiforma, Hisui, Alola, Galar, mega, gigamax)
 Revisar Greninja Battle Bond, Zygarde Power Construct, Rockruff Own Tempo
-Meter los Furfrou, Vivillon, Alcremie
-Revisar pokemon con nombres raros
 Stats:
     HP = floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + Level + 10
-    Other Stats = (floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + 5) x Nature (nature is +- 10%)
+    Other Stats = floor((floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + 5) x Nature) (nature is +- 10%)
