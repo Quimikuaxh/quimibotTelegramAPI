@@ -4,12 +4,12 @@ import pokemonStats from './types/pokemonStats';
 import {imagePosition} from "./types/imagePosition";
 import {generation} from "./types/generation";
 import * as cheerio from "cheerio";
-import pokemonID from "./types/pokemonID";
 import {pokemonType_ES} from "./types/pokemonType_ES";
 import {Utils} from "./utils/utils"
 import pokemonShowdown from "./types/pokemonShowdown";
 import pokemonMove from "./types/pokemonMove";
 import fs from "fs";
+import pokemonMap from "../files/pokemon.json";
 
 export class Pokemon {
 
@@ -18,7 +18,7 @@ export class Pokemon {
     private static POKEMON_LIST_URL = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=9999";
     private static POKEPASTE_URL = "https://pokepast.es/create";
 
-    static async getPokemonList(): Promise<string[]>{
+    static async getPokemonListFromAPI(): Promise<string[]>{
         const pokemonList:string[] = [];
 
         const result = await axios.get(this.POKEMON_LIST_URL);
@@ -30,24 +30,30 @@ export class Pokemon {
         return pokemonList
     }
 
-    static async getPokemonInfo(pokemon: string): Promise<pokemonInfo>{
-        const result = await axios.get(this.API_URL + 'pokemon/'+ pokemon);
-        const data = await result.data;
+    static translateType(type:string): string{
+        return pokemonType_ES[type.toUpperCase() as keyof typeof pokemonType_ES];
+    }
 
-        const types = this.getTypes(data);
-        const stats = this.getStats(data);
+    static async getPokemonVarietyInfo(pokemon: string): Promise<pokemonInfo>{
+        // eslint-disable-next-line no-console
+        //console.log(pokemon);
+        const varietyResult = await axios.get(`${this.API_URL}/pokemon/${pokemon}`);
+        const varietyData = await varietyResult.data;
 
-        // const imageURL = await getImageURL(pokemon, 5, 'black-white', true, true, false, false)
-        const imageURL = await this.getImageFromWiki(data.name)
+        const pokemonSpecies = await axios.get(varietyData.species.url);
+        const speciesData = await pokemonSpecies.data;
+        const id = speciesData.id;
 
-        const moves = await this.getPokemonMoves(result);
+        const types = this.getTypes(varietyData);
+        const stats = this.getStats(varietyData);
+
+        const moves = await this.getPokemonMoves(varietyResult);
 
         const res = {
-            name: data.name.toUpperCase(),
-            url: this.API_URL + pokemon,
+            name: varietyData.name,
+            id: id,
             types: types,
             stats: stats,
-            image: imageURL,
             moves: moves,
         };
         // eslint-disable-next-line no-console
@@ -55,24 +61,59 @@ export class Pokemon {
         return res;
     }
 
-    static translateType(type:string): string{
-        return pokemonType_ES[type.toUpperCase() as keyof typeof pokemonType_ES];
+    static async translatePokemonFromShowdown(pokemonFromShowdown: string){
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return pokemonMap[pokemonFromShowdown];
+    }
+
+    static async batchAllPokemonInfo():Promise<pokemonInfo[]>{
+        const pokemonList = Object.values(pokemonMap);/*.map(pokemon => {
+            return this.getPokemonVarietyInfo(pokemon);
+        });*/
+        const uniq = [...new Set(pokemonList)];
+        const pokemonInfo = [];
+        const pokemonLeft = [];
+        for(const pokemon of uniq){
+            try{
+                // eslint-disable-next-line no-console
+                console.log(pokemon);
+                pokemonInfo.push(await this.getPokemonVarietyInfo(pokemon));
+            }catch (e) {
+                pokemonLeft.push(pokemon)
+            }
+
+        }
+
+        //const pokemonInfo = await Promise.all(pokemonList);
+        // eslint-disable-next-line no-console
+        console.log(pokemonLeft);
+
+        const jsonContent = JSON.stringify(pokemonInfo);
+
+        fs.writeFile("./pokemoninfo-test.json", jsonContent, 'utf8', function (err) {
+            if (err) {
+                // eslint-disable-next-line no-console
+                return console.log(err);
+            }
+
+            // eslint-disable-next-line no-console
+            console.log("The file was saved!");
+        });
+        return pokemonInfo;
     }
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    static async getPokemonSpeciesInfo(): Promise<any>{
+    static async getAllPokemonSpeciesInfo(): Promise<any>{
         const res = {};
         const pokemonLeft: string[] = [];
         for(let i = 1; i<905; i++){ //905
             // eslint-disable-next-line no-console
             console.log("Calculating pokémon number "+i);
-            const speciesInfo: pokemonID[] = [];
 
             const result = await axios.get(this.API_URL + 'pokemon-species/'+ i.toString());
             const data = await result.data;
-
-            const id = data.id;
 
             const varieties = this.getVarieties(data);
 
@@ -80,12 +121,6 @@ export class Pokemon {
                 for(const variety of varieties){
                     const varietyResult = await axios.get(variety);
                     const varietyData = await varietyResult.data;
-                    const varietyInfo: pokemonID = {
-                        name: varietyData.name,
-                        url: variety,
-                        id: id,
-                    }
-                    speciesInfo.push(varietyInfo)
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     res[varietyData.name] = varietyData.name;
@@ -105,7 +140,7 @@ export class Pokemon {
 
         const jsonContent = JSON.stringify(res);
 
-        fs.writeFile("./pokemon.json", jsonContent, 'utf8', function (err) {
+        fs.writeFile("./pokemonList-test.json", jsonContent, 'utf8', function (err) {
             if (err) {
                 // eslint-disable-next-line no-console
                 return console.log(err);
@@ -450,3 +485,5 @@ export class Pokemon {
         return res;
     }
 }
+
+Pokemon.getPokemonVarietyInfo("salandit");

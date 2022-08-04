@@ -1,6 +1,7 @@
 - Search for pokemon with multiple forms (Lycanroc, Oricorio, Greninja-Ash, Darmanitan) and split forms
 - Cuadrícula de equipo pokemon
 - Login usando el usuario de telegram, contraseña por chat
+- Guardar los pokemon en una "biblioteca" que se puedan reutilizar
 
 Buscar fotos de los pokes que faltan (multiforma, Hisui, Alola, Galar, mega, gigamax)
 Revisar Greninja Battle Bond, Zygarde Power Construct, Rockruff Own Tempo

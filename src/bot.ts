@@ -35,7 +35,7 @@ bot.onText(/\/covid/, async (msg) => {
     }
 })
 
-bot.onText(/\/pokemon/, async (msg) => {
+/*bot.onText(/\/pokemon/, async (msg) => {
     const chatId = msg.chat.id
     const messageText = msg.text;
     try{
@@ -60,7 +60,7 @@ bot.onText(/\/pokemon/, async (msg) => {
         console.error(e)
         bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.");
     }
-})
+})*/
 
 bot.onText(/\/team/, async (msg) => {
     const chatId = msg.chat.id

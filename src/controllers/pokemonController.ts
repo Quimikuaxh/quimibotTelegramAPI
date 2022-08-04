@@ -9,3 +9,12 @@ export function getAllPokemon(_req: express.Request, res: express.Response){
 export function getOnePokemon(req: express.Request, res: express.Response){
     res.send('Get pokemon with id '+req.params.pokemonId);
 }
+
+export function createTeam(req: express.Request, res: express.Response){
+    const { body } = req;
+    if(!body){
+        res.status(400);
+        return;
+    }
+    res.status(201).send({status: "OK", data: "urlPokePaste"});
+}
