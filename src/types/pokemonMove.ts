@@ -6,5 +6,6 @@ export default interface pokemonMove {
         accuracy?: number,
         power?: number,
         description: string,
+        effect_chance: number
     }
 }

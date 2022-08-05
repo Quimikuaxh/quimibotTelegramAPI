@@ -334,14 +334,16 @@ export class Pokemon {
         const moveInfo = await axios.get(url);
         const moveData = await moveInfo.data;
 
-        const description = moveData.effect_entries.effect;
+        const effectChance = moveData.effect_chance == null ? 0 : moveData.effect_chance;
+        let description = moveData.effect_entries[moveData.effect_entries.length-1].effect;
+        description = description.replace("$effect_chance%");
         //If accuracy or power are null, it takes no effect on the move
-        const accuracy = moveData.accuracy == null ? undefined : moveData.accuracy;
-        const power = moveData.power == null ? undefined : moveData.power;
+        const accuracy = moveData.accuracy == null ? 101 : moveData.accuracy;
+        const power = moveData.power == null ? 0 : moveData.power;
 
         editions.forEach((edition: any) => {
             const editionName = edition.version_group.name
-            const levelLearnt = edition.level_learned_at;
+            const levelLearnt = edition.level_learned_at == null ? 0 : edition.level_learned_at;
 
             res.push({
                 edition: editionName,
@@ -350,7 +352,8 @@ export class Pokemon {
                     "levelLearnt": levelLearnt,
                     "accuracy": accuracy,
                     "power": power,
-                    "description": description
+                    "description": description,
+                    "effect_chance": effectChance
                 }
             });
         });
@@ -486,4 +489,4 @@ export class Pokemon {
     }
 }
 
-Pokemon.getPokemonVarietyInfo("salandit");
+Pokemon.getPokemonVarietyInfo("falinks");
