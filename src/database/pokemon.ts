@@ -2,6 +2,7 @@ import DB from './db.json';
 import mongoose from "mongoose";
 import pokemonInfo from "../types/pokemonInfo";
 import {PokemonSchema} from "./schemas/pokemon";
+import {PokemonModel} from "./models/pokemon";
 
 const dbURL: string = process.env.MONGO_URL as string;
 
@@ -11,7 +12,7 @@ mongoose.connect(dbURL)
     // eslint-disable-next-line no-console
     .catch((e) => console.log("Error trying to connect to DB.\n")+e);
 
-const PokemonModel = mongoose.model("pokemon", PokemonSchema);
+
 
 export async function getPokemonList(){
     const pokemon = await PokemonModel.find();
