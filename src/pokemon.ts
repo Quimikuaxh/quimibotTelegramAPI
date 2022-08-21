@@ -488,5 +488,3 @@ export class Pokemon {
         return res;
     }
 }
-
-Pokemon.getPokemonVarietyInfo("falinks");

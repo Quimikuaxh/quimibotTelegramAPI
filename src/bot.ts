@@ -1,9 +1,12 @@
-import './env'
+import './env';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs'
 import {Pokemon} from './pokemon'
 
 const token = process.env.BOT_TOKEN ?? "tokenVacio"
+
+// eslint-disable-next-line no-console
+console.log(token);
 
 const bot = new TelegramBot(token, {
     polling: true,

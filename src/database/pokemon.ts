@@ -1,8 +1,9 @@
 import DB from './db.json';
 import mongoose from "mongoose";
 import pokemonInfo from "../types/pokemonInfo";
-import {PokemonSchema} from "./schemas/pokemon";
 import {PokemonModel} from "./models/pokemon";
+
+import '../env';
 
 const dbURL: string = process.env.MONGO_URL as string;
 

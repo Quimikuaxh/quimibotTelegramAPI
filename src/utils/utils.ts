@@ -2,6 +2,9 @@ import * as cheerio from "cheerio";
 import axios from 'axios';
 import fs from 'fs';
 import request from 'request';
+import * as pokemonService from '../services/pokemonService';
+import pokemonData from "../../files/pokemoninfo.json";
+import pokemonInfo from "../types/pokemonInfo";
 
 export class Utils{
     private static WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
@@ -52,5 +55,16 @@ export class Utils{
             .replace(/\//g, "%2F").replace(/:/g, "%3A")
             .replace(/@/g, "%40").replace(/'/g, "%27");
     }
+
+    static loadPokemonInDDBB(){
+        const array = pokemonData as pokemonInfo[];
+        for(const pokemon of array){
+            // eslint-disable-next-line no-console
+            console.log("Saving pokémon "+ pokemon.name)
+            pokemonService.createPokemon(pokemon).then(r => console.log("saved!"));
+        }
+    }
 }
+
+Utils.loadPokemonInDDBB();
 
