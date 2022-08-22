@@ -24,7 +24,14 @@ export async function getPokemonList(){
 
 export async function createPokemon(pokemonReceived: pokemonInfo ){
     const pokemon = new PokemonModel(pokemonReceived)
-    const res = await pokemon.save();
+    const res = pokemon.save((err, document) => {
+        if (err)
+            // eslint-disable-next-line no-console
+            console.error(err);
+        else
+            // eslint-disable-next-line no-console
+            console.log(document.name+' saved!');
+    });
     return res;
 }
 

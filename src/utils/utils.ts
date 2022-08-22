@@ -61,7 +61,8 @@ export class Utils{
         for(const pokemon of array){
             // eslint-disable-next-line no-console
             console.log("Saving pokémon "+ pokemon.name)
-            pokemonService.createPokemon(pokemon).then(r => console.log("saved!"));
+            // eslint-disable-next-line no-console
+            pokemonService.createPokemon(pokemon);
         }
     }
 }

@@ -8,6 +8,6 @@ const pokemonSchema = new mongoose.Schema({
     types: [String],
     stats: Stats,
     moves: [EditionSchema],
-});
+}, { collection: 'pokemon' });
 
 export {pokemonSchema as PokemonSchema}
