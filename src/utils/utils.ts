@@ -56,14 +56,20 @@ export class Utils{
             .replace(/@/g, "%40").replace(/'/g, "%27");
     }
 
-    static loadPokemonInDDBB(){
+    static async loadPokemonInDDBB(){
         const array = pokemonData as pokemonInfo[];
+        await this.sleep(10000);
         for(const pokemon of array){
             // eslint-disable-next-line no-console
             console.log("Saving pokémon "+ pokemon.name)
             // eslint-disable-next-line no-console
             pokemonService.createPokemon(pokemon);
         }
+    }
+    static sleep(ms:number) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        });
     }
 }
 

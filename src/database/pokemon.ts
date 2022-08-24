@@ -24,6 +24,7 @@ export async function getPokemonList(){
 
 export async function createPokemon(pokemonReceived: pokemonInfo ){
     const pokemon = new PokemonModel(pokemonReceived)
+
     const res = pokemon.save((err, document) => {
         if (err)
             // eslint-disable-next-line no-console
