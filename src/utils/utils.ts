@@ -2,9 +2,11 @@ import * as cheerio from "cheerio";
 import axios from 'axios';
 import fs from 'fs';
 import request from 'request';
-import * as pokemonService from '../services/pokemonService';
+
+//Load in BBDD
+/*import * as pokemonService from '../services/pokemonService';
 import pokemonData from "../../files/pokemoninfo.json";
-import pokemonInfo from "../types/pokemonInfo";
+import pokemonInfo from "../types/pokemonInfo";*/
 
 export class Utils{
     private static WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
@@ -56,7 +58,8 @@ export class Utils{
             .replace(/@/g, "%40").replace(/'/g, "%27");
     }
 
-    static async loadPokemonInDDBB(){
+    //Load in BBDD
+    /*static async loadPokemonInDDBB(){
         const array = pokemonData as pokemonInfo[];
         await this.sleep(10000);
         for(const pokemon of array){
@@ -70,8 +73,6 @@ export class Utils{
         return new Promise((resolve) => {
             setTimeout(resolve, ms);
         });
-    }
+    }*/
 }
-
-Utils.loadPokemonInDDBB();
 

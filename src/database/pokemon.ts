@@ -18,6 +18,20 @@ mongoose.connect(dbURL)
 export async function getPokemonList(){
     const pokemon = await PokemonModel.find();
     // eslint-disable-next-line no-console
+    //console.log(JSON.stringify(pokemon));
+    return pokemon;
+}
+
+export async function getPokemonByName(name: string){
+    const pokemon = await PokemonModel.find({name: name});
+    // eslint-disable-next-line no-console
+    console.log(JSON.stringify(pokemon));
+    return pokemon;
+}
+
+export async function getPokemonByNumber(idNumber: number){
+    const pokemon = await PokemonModel.find({id: idNumber});
+    // eslint-disable-next-line no-console
     console.log(JSON.stringify(pokemon));
     return pokemon;
 }
