@@ -4,7 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use("/api/v1/pokemon", v1PokemonRouter);
+app.use("/api/v1", v1PokemonRouter);
 
 app.listen(PORT, () => {
     // eslint-disable-next-line no-console

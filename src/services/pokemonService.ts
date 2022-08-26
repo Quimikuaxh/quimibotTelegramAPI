@@ -4,8 +4,8 @@ import pokemonInfo from "../types/pokemonInfo";
 export function getAllPokemon(){
     return pokemonDB.getAllPokemon();
 }
-export function getOnePokemon(){
-    return;
+export function getPokemonByID(idNumber: number){
+    return pokemonDB.getPokemonByNumber(idNumber);
 }
 export function createPokemon(pokemon:pokemonInfo){
     return pokemonDB.createPokemon(pokemon);

@@ -7,6 +7,13 @@ const pokemonSchema = new mongoose.Schema({
     types: [String],
     stats: Stats,
     moves: [Object],
-}, { collection: 'pokemon' });
+}, { collection: 'pokemon',
+    toJSON: {
+        transform: function(_doc, ret) {
+            delete ret._id;
+            delete ret.__v;
+        }
+    }
+});
 
 export {pokemonSchema as PokemonSchema}

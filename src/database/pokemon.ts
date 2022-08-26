@@ -1,8 +1,7 @@
-import DB from './db.json';
 import mongoose from "mongoose";
 import pokemonInfo from "../types/pokemonInfo";
 import {PokemonModel} from "./models/pokemon";
-
+//import DB from './db.json';
 import '../env';
 
 const dbURL: string = process.env.MONGO_URL as string;
@@ -11,7 +10,7 @@ mongoose.connect(dbURL)
     // eslint-disable-next-line no-console
     .then(() => console.log("Connected to DB."))
     // eslint-disable-next-line no-console
-    .catch((e) => console.log("Error trying to connect to DB.\n")+e);
+    .catch((e) => console.error("Error trying to connect to DB.\n\n")+e);
 
 
 
@@ -30,10 +29,8 @@ export async function getPokemonByName(name: string){
 }
 
 export async function getPokemonByNumber(idNumber: number){
-    const pokemon = await PokemonModel.find({id: idNumber});
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(pokemon));
-    return pokemon;
+    const pokemonList = await PokemonModel.find({id: idNumber});
+    return pokemonList[0];
 }
 
 export async function createPokemon(pokemonReceived: pokemonInfo ){
@@ -51,17 +48,15 @@ export async function createPokemon(pokemonReceived: pokemonInfo ){
 }
 
 export async function updatePokemon(id: number, updatedPokemon: pokemonInfo){
-    const pokemon = await PokemonModel.updateOne({_id: id}, {
+    return PokemonModel.updateOne({_id: id}, {
         $set: updatedPokemon
     });
-    return pokemon;
 }
 
 export async function deletePokemon(id: number){
-    const pokemon = await PokemonModel.deleteOne({_id: id});
-    return pokemon;
+    return PokemonModel.deleteOne({_id: id});
 }
 
-export function getAllPokemon(){
-    return DB.pokemon;
+export async function getAllPokemon() {
+    return PokemonModel.find();
 }
