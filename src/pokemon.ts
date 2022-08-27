@@ -495,11 +495,12 @@ export class Pokemon {
         const translatedMoves = [];
         const savedMoves = savedPokemon.moves[savedPokemon.moves.length - 1];
         for(const move of moves){
-            const splitMove = move.split(' ');
+            const lcMove = move.toLowerCase();
+            const splitMove = lcMove.split(' ');
             for(const savedMove of savedMoves){
                 let moveIsCorrect = true;
                 for(const piece of splitMove){
-                    if(!savedMove.contains(piece)){
+                    if(!savedMove.toLowerCase().contains(piece)){
                         moveIsCorrect = false;
                         break;
                     }
