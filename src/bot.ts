@@ -80,5 +80,5 @@ bot.onText(/\/team/, async (msg) => {
     }catch{
         bot.sendMessage(chatId, "Could not parse your team.");
     }
-})
+});
 

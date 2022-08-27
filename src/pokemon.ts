@@ -10,6 +10,7 @@ import pokemonShowdown from "./types/pokemonShowdown";
 import pokemonMove from "./types/pokemonMove";
 import fs from "fs";
 import pokemonMap from "../files/pokemon.json";
+import { getPokemonByName } from './services/pokemonService';
 
 export class Pokemon {
 
@@ -359,7 +360,7 @@ export class Pokemon {
         });
         return res;
     }
-    static parseTeam(team: string): pokemonShowdown[]{
+    static async parseTeam(team: string): Promise<pokemonShowdown[]>{
         try{
             const pokemonList: string[] = team.trim().split('\n\n');
             const pokemonParsedTeam: pokemonShowdown[] = [];
@@ -427,7 +428,7 @@ export class Pokemon {
                             moves.push(pokemonRows[i].replace('- ', '').trim());
                         }
                     }
-                    pokemonParsed.moves = moves;
+                    pokemonParsed.moves = await this.translateMoves(pokemonParsed.name, moves);
                     pokemonParsed.IVs = ivs;
                     pokemonParsed.EVs = evs;
                 }
@@ -443,6 +444,7 @@ export class Pokemon {
         }
 
     }
+
     static getEVsIVs(evsivs: string[], isEvs: boolean): pokemonStats{
         let res: pokemonStats;
         if(isEvs){
@@ -486,5 +488,28 @@ export class Pokemon {
             }
         }
         return res;
+    }
+
+    static async translateMoves(pokemon: string, moves: string[]){
+        const savedPokemon = await getPokemonByName(pokemon);
+        const translatedMoves = [];
+        const savedMoves = savedPokemon.moves[savedPokemon.moves.length - 1];
+        for(const move of moves){
+            const splitMove = move.split(' ');
+            for(const savedMove of savedMoves){
+                let moveIsCorrect = true;
+                for(const piece of splitMove){
+                    if(!savedMove.contains(piece)){
+                        moveIsCorrect = false;
+                        break;
+                    }
+                }
+                if(moveIsCorrect){
+                    translatedMoves.push(savedMove);
+                    break;
+                }
+            }
+        }
+        return translatedMoves;
     }
 }
