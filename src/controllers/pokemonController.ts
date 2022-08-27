@@ -4,7 +4,7 @@ import pokemonInfo from "../types/pokemonInfo";
 
 export async function getAllPokemon(_req: express.Request, res: express.Response){
     const allPokemon = await pokemonService.getAllPokemon();
-    res.send({status: "OK", data: allPokemon});
+    res.send(allPokemon);
 }
 
 export async function getPokemon(req: express.Request, res: express.Response){
