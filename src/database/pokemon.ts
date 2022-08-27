@@ -15,17 +15,14 @@ mongoose.connect(dbURL)
 
 
 export async function getPokemonList(){
-    const pokemon = await PokemonModel.find();
-    // eslint-disable-next-line no-console
-    //console.log(JSON.stringify(pokemon));
-    return pokemon;
+    return await PokemonModel.find();
 }
 
 export async function getPokemonByName(name: string){
-    const pokemon = await PokemonModel.find({name: name});
+    const pokemonList = await PokemonModel.find({name: name});
     // eslint-disable-next-line no-console
-    console.log(JSON.stringify(pokemon));
-    return pokemon;
+    //console.log(JSON.stringify(pokemon));
+    return pokemonList[0];
 }
 
 export async function getPokemonByNumber(idNumber: number){
@@ -36,15 +33,14 @@ export async function getPokemonByNumber(idNumber: number){
 export async function createPokemon(pokemonReceived: pokemonInfo ){
     const pokemon = new PokemonModel(pokemonReceived)
 
-    const res = pokemon.save((err, document) => {
+    return pokemon.save((err, document) => {
         if (err)
             // eslint-disable-next-line no-console
             console.error(err);
         else
             // eslint-disable-next-line no-console
-            console.log(document.name+' saved!');
+            console.log(document.name + ' saved!');
     });
-    return res;
 }
 
 export async function updatePokemon(id: number, updatedPokemon: pokemonInfo){

@@ -7,6 +7,9 @@ export function getAllPokemon(){
 export function getPokemonByID(idNumber: number){
     return pokemonDB.getPokemonByNumber(idNumber);
 }
+export function getPokemonByName(name: string){
+    return pokemonDB.getPokemonByName(name);
+}
 export function createPokemon(pokemon:pokemonInfo){
     return pokemonDB.createPokemon(pokemon);
 }
