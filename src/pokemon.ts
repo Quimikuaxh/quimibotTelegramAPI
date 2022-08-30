@@ -250,10 +250,11 @@ export class Pokemon {
     }
 
     static async createPokePaste(input: string): Promise<string>{
+        const encodedTeam = this.createPokePasteInput(input);
         const searchResult = await axios({
             method: 'post',
             url: this.POKEPASTE_URL,
-            data: input
+            data: encodedTeam
         });
 
         return `${searchResult.request.protocol}//${searchResult.request.host}${searchResult.request.path}` as string;
@@ -491,16 +492,16 @@ export class Pokemon {
     }
 
     static async translateMoves(pokemon: string, moves: string[]){
-        const savedPokemon = await getPokemonByName(pokemon);
+        const savedPokemon = await getPokemonByName(pokemon.toLowerCase());
         const translatedMoves = [];
         const savedMoves = savedPokemon.moves[savedPokemon.moves.length - 1];
         for(const move of moves){
             const lcMove = move.toLowerCase();
             const splitMove = lcMove.split(' ');
-            for(const savedMove of savedMoves){
+            for(const savedMove of savedMoves.moves){
                 let moveIsCorrect = true;
                 for(const piece of splitMove){
-                    if(!savedMove.toLowerCase().contains(piece)){
+                    if(!savedMove.move.toLowerCase().includes(piece)){
                         moveIsCorrect = false;
                         break;
                     }

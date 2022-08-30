@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import pokemonInfo from "../types/pokemonInfo";
+import team from "../types/team";
 import {PokemonModel} from "./models/pokemon";
+import {TeamModel} from "./models/team";
+
 //import DB from './db.json';
 import '../env';
 
@@ -11,12 +14,6 @@ mongoose.connect(dbURL)
     .then(() => console.log("Connected to DB."))
     // eslint-disable-next-line no-console
     .catch((e) => console.error("Error trying to connect to DB.\n\n")+e);
-
-
-
-export async function getPokemonList(){
-    return await PokemonModel.find();
-}
 
 export async function getPokemonByName(name: string){
     const pokemonList = await PokemonModel.find({name: name});
@@ -55,4 +52,16 @@ export async function deletePokemon(id: number){
 
 export async function getAllPokemon() {
     return PokemonModel.find();
+}
+
+export async function createPokemonTeam(teamReceived: team){
+    const team = new TeamModel(teamReceived)
+    return team.save((err) => {
+        if (err)
+            // eslint-disable-next-line no-console
+            console.error(err);
+        else
+            // eslint-disable-next-line no-console
+            console.log('Team saved!');
+    });
 }

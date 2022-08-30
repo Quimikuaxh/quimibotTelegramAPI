@@ -1,5 +1,6 @@
 import * as pokemonDB from '../database/pokemon';
 import pokemonInfo from "../types/pokemonInfo";
+import team from "../types/team";
 
 export function getAllPokemon(){
     return pokemonDB.getAllPokemon();
@@ -18,4 +19,7 @@ export function editPokemon(id: number, pokemon: pokemonInfo){
 }
 export function deletePokemon(id: number){
     return pokemonDB.deletePokemon(id);
+}
+export function createTeam(team: team){
+    return pokemonDB.createPokemonTeam(team);
 }
