@@ -363,11 +363,13 @@ export class Pokemon {
     }
     static async parseTeam(team: string): Promise<pokemonShowdown[]>{
         try{
-            const pokemonList: string[] = team.trim().split('\n\n');
+            const pokemonList: string[] = team.trim().split('\r\n\r\n');
+            // eslint-disable-next-line no-console
+            console.log(pokemonList);
             const pokemonParsedTeam: pokemonShowdown[] = [];
 
             for(const pokemon of pokemonList){
-                const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
+                const pokemonRows = pokemon.split('\r\n').map(ev => ev.trim());
                 const pokemonParsed:pokemonShowdown = {
                     name: "Missigno",
                     shiny: false,
@@ -494,21 +496,25 @@ export class Pokemon {
     static async translateMoves(pokemon: string, moves: string[]){
         const savedPokemon = await getPokemonByName(pokemon.toLowerCase());
         const translatedMoves = [];
+        const translatedNames: string[] = [];
         const savedMoves = savedPokemon.moves[savedPokemon.moves.length - 1];
         for(const move of moves){
             const lcMove = move.toLowerCase();
             const splitMove = lcMove.split(' ');
             for(const savedMove of savedMoves.moves){
-                let moveIsCorrect = true;
-                for(const piece of splitMove){
-                    if(!savedMove.move.toLowerCase().includes(piece)){
-                        moveIsCorrect = false;
+                if(!translatedNames.includes(savedMove)){
+                    let moveIsCorrect = true;
+                    for(const piece of splitMove){
+                        if(!savedMove.move.toLowerCase().includes(piece)){
+                            moveIsCorrect = false;
+                            break;
+                        }
+                    }
+                    if(moveIsCorrect){
+                        translatedMoves.push(savedMove);
+                        translatedNames.push(savedMove.move);
                         break;
                     }
-                }
-                if(moveIsCorrect){
-                    translatedMoves.push(savedMove);
-                    break;
                 }
             }
         }
