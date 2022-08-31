@@ -27,8 +27,9 @@ export async function getPokemon(req: express.Request, res: express.Response){
 export async function createTeam(req: express.Request, res: express.Response){
     const body = req.body;
     if(body !== undefined){
-        const pokemonList: pokemonShowdown[] = await Pokemon.parseTeam(body);
-        const pokepaste: string = await Pokemon.createPokePaste(body)
+        const parsedBody = body.replace(/\r\n/g, '\n');
+        const pokemonList: pokemonShowdown[] = await Pokemon.parseTeam(parsedBody);
+        const pokepaste: string = await Pokemon.createPokePaste(parsedBody)
         //const user: string = "TEMPORAL";
 
         const team: team = {
@@ -37,6 +38,9 @@ export async function createTeam(req: express.Request, res: express.Response){
             parsedTeam: pokemonList,
             pokepaste: pokepaste
         }
+
+        // eslint-disable-next-line no-console
+        console.log(team);
         /*pokemonService.createTeam(team).then((dbResponse) => {
             dbResponse === undefined ? res.status(400).send("Team could not be saved in the database.") : res.status(201).send(team)
         });*/

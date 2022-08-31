@@ -363,13 +363,11 @@ export class Pokemon {
     }
     static async parseTeam(team: string): Promise<pokemonShowdown[]>{
         try{
-            const pokemonList: string[] = team.trim().split('\r\n\r\n');
-            // eslint-disable-next-line no-console
-            console.log(pokemonList);
+            const pokemonList: string[] = team.trim().split('\n\n');
             const pokemonParsedTeam: pokemonShowdown[] = [];
 
             for(const pokemon of pokemonList){
-                const pokemonRows = pokemon.split('\r\n').map(ev => ev.trim());
+                const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
                 const pokemonParsed:pokemonShowdown = {
                     name: "Missigno",
                     shiny: false,
@@ -438,7 +436,7 @@ export class Pokemon {
                 pokemonParsedTeam.push(pokemonParsed);
             }
             // eslint-disable-next-line no-console
-            console.log(pokemonParsedTeam)
+            //console.log(pokemonParsedTeam)
             return pokemonParsedTeam;
         }catch (e) {
             // eslint-disable-next-line no-console
