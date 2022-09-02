@@ -27,23 +27,27 @@ export async function getPokemon(req: express.Request, res: express.Response){
 export async function createTeam(req: express.Request, res: express.Response){
     const body = req.body;
     if(body !== undefined){
-        const parsedBody = body.replace(/\r\n/g, '\n');
-        const pokemonList: pokemonShowdown[] = await Pokemon.parseTeam(parsedBody);
-        const pokepaste: string = await Pokemon.createPokePaste(parsedBody)
-        //const user: string = "TEMPORAL";
+        try{
+            const parsedBody = body.replace(/\r\n/g, '\n');
+            const pokemonList: pokemonShowdown[] = await Pokemon.parseTeam(parsedBody);
+            const pokepaste: string = await Pokemon.createPokePaste(parsedBody)
+            //const user: string = "TEMPORAL";
 
-        const team: team = {
-            user: "TEMPORAL",
-            team: body,
-            parsedTeam: pokemonList,
-            pokepaste: pokepaste
+            const team: team = {
+                user: "TEMPORAL",
+                team: body,
+                parsedTeam: pokemonList,
+                pokepaste: pokepaste
+            }
+
+            // eslint-disable-next-line no-console
+            console.log(team);
+            pokemonService.createTeam(team).then(() => {
+                res.status(201).send(team)
+            });
+        }catch(e){
+            res.status(400).send("Team could not be saved in the database. Team format may be wrong, please check it and try again.")
         }
-
-        // eslint-disable-next-line no-console
-        console.log(team);
-        /*pokemonService.createTeam(team).then((dbResponse) => {
-            dbResponse === undefined ? res.status(400).send("Team could not be saved in the database.") : res.status(201).send(team)
-        });*/
     }
     else{
         res.status(400).send("Team could not be saved in the database. Team format may be wrong, please check it and try again.")
