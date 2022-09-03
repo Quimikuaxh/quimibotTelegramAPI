@@ -1,10 +1,10 @@
-- Search for pokemon with multiple forms (Lycanroc, Oricorio, Greninja-Ash, Darmanitan) and split forms
-- Cuadrícula de equipo pokemon
+- Cuadrícula de equipo pokemon (para stream o lo que sea)
 - Login usando el usuario de telegram, contraseña por chat
-- Guardar los pokemon en una "biblioteca" que se puedan reutilizar
+- Guardar los pokemon de un usuario en una "biblioteca" que se puedan reutilizar
+- Guardar la info de los items y de las habilidades
 
 Buscar fotos de los pokes que faltan (multiforma, Hisui, Alola, Galar, mega, gigamax)
-Revisar Greninja Battle Bond, Zygarde Power Construct, Rockruff Own Tempo
+Revisar Greninja Battle Bond, Zygarde Power Construct, Rockruff Own Tempo (añadir habilidades a los pokémon en mongo)
 Stats:
     HP = floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + Level + 10
     Other Stats = floor((floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + 5) x Nature) (nature is +- 10%)

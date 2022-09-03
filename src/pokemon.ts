@@ -402,6 +402,17 @@ export class Pokemon {
                 else{
                     pokemonParsed.name = pokemonRows[0].trim();
                 }
+                const pokemonName = await this.translatePokemonFromShowdown(pokemonParsed.name.toLowerCase());
+                let pokemonInDB;
+                if(pokemonName === undefined){
+                    throw new Error(`Pokémon name ${pokemonParsed.name} is not correct`);
+                }
+                else{
+                    pokemonInDB = await getPokemonByName(pokemonName);
+                    if(pokemonInDB === undefined){
+                        throw new Error(`Pokémon ${pokemonName} was not found in DB`);
+                    }
+                }
                 pokemonParsed.item = pokemonRows[0].includes('@') ? pokemonRows[0].split('@')[1].trim() : undefined;
 
                 // The rest of the rows
@@ -497,6 +508,7 @@ export class Pokemon {
         const translatedNames: string[] = [];
         const savedMoves = savedPokemon.moves[savedPokemon.moves.length - 1];
         for(const move of moves){
+            let moveFound = false;
             const lcMove = move.toLowerCase();
             const splitMove = lcMove.split(' ');
             for(const savedMove of savedMoves.moves){
@@ -511,9 +523,13 @@ export class Pokemon {
                     if(moveIsCorrect){
                         translatedMoves.push(savedMove);
                         translatedNames.push(savedMove.move);
+                        moveFound = true;
                         break;
                     }
                 }
+            }
+            if(!moveFound){
+                throw new Error(`Move ${move} was not found`);
             }
         }
         return translatedMoves;
