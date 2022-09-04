@@ -1,7 +1,7 @@
-import './env';
+import '../env/env';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs'
-import {Pokemon} from './pokemon'
+import {Pokemon} from './utils/pokemon'
 
 const token = process.env.BOT_TOKEN ?? "tokenVacio"
 

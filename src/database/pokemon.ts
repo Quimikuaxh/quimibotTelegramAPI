@@ -5,7 +5,7 @@ import {PokemonModel} from "./models/pokemon";
 import {TeamModel} from "./models/team";
 
 //import DB from './db.json';
-import '../env';
+import '../../env/env';
 
 const dbURL: string = process.env.MONGO_URL as string;
 

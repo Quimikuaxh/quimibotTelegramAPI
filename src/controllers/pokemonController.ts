@@ -1,9 +1,9 @@
 import express from 'express';
 import * as pokemonService from '../services/pokemonService';
 import pokemonInfo from "../types/pokemonInfo";
-import {Pokemon} from "../pokemon";
 import team from "../types/team";
 import pokemonShowdown from "../types/pokemonShowdown";
+import {Showdown} from "../utils/showdown";
 
 export async function getAllPokemon(_req: express.Request, res: express.Response){
     const allPokemon = await pokemonService.getAllPokemon();
@@ -29,8 +29,8 @@ export async function createTeam(req: express.Request, res: express.Response){
     if(body !== undefined){
         try{
             const parsedBody = body.replace(/\r\n/g, '\n');
-            const pokemonList: pokemonShowdown[] = await Pokemon.parseTeam(parsedBody);
-            const pokepaste: string = await Pokemon.createPokePaste(parsedBody)
+            const pokemonList: pokemonShowdown[] = await Showdown.parseTeam(parsedBody);
+            const pokepaste: string = await Showdown.createPokePaste(parsedBody)
             //const user: string = "TEMPORAL";
 
             const team: team = {

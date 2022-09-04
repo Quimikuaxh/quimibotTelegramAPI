@@ -7,6 +7,7 @@ const pokemonSchema = new mongoose.Schema({
     types: [String],
     stats: Stats,
     moves: [Object],
+    abilities: [String],
 }, { collection: 'pokemon',
     toJSON: {
         transform: function(_doc, ret) {
