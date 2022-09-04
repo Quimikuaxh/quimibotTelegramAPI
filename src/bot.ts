@@ -1,7 +1,7 @@
 import '../env/env';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs'
-import {Pokemon} from './utils/pokemon'
+import {Showdown} from "./utils/showdown";
 
 const token = process.env.BOT_TOKEN ?? "tokenVacio"
 
@@ -72,9 +72,9 @@ bot.onText(/\/team/, async (msg) => {
     const team = messageText?.replace("/team", "").trim() as string;
 
     try{
-        Pokemon.parseTeam(team);
-        const parsedTeamForPokePaste = Pokemon.createPokePasteInput(team);
-        const teamURL = await Pokemon.createPokePaste(parsedTeamForPokePaste);
+        Showdown.parseTeam(team);
+        const parsedTeamForPokePaste = Showdown.createPokePasteInput(team);
+        const teamURL = await Showdown.createPokePaste(parsedTeamForPokePaste);
 
         bot.sendMessage(chatId, "Here is your saved team in PokePaste "+String.fromCodePoint(0x1F601)+": "+ teamURL);
     }catch{
