@@ -27,6 +27,16 @@ export class Pokemon {
         return pokemonList
     }
 
+    static getNonExistingPokemonImages(){
+        const pokemonList = Object.keys(pokemonMap);
+        for(const pokemon of pokemonList){
+            if(!fs.existsSync(`images/fullImage/${pokemon}.png`)){
+                // eslint-disable-next-line no-console
+                console.log(`${pokemon} image is not stored`);
+            }
+        }
+    }
+
     static translateType(type:string): string{
         return pokemonType_ES[type.toUpperCase() as keyof typeof pokemonType_ES];
     }
@@ -385,3 +395,5 @@ export class Pokemon {
         return res;
     }
 }
+
+Pokemon.getNonExistingPokemonImages();

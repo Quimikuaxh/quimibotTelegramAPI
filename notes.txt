@@ -9,25 +9,246 @@ Stats:
     HP = floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + Level + 10
     Other Stats = floor((floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + 5) x Nature) (nature is +- 10%)
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-<div id="app"></div>
-    <script>
-        const holaMundo = {
-            data(){
-                return{
-                    nombre: 'Quimi'
-                }
-            }
-        }
-
-        Vue.createApp(holaMundo).mount('#app')
-    </script>
-</body>
-</html>
+blastoise-mega image is not stored
+blastoise-gmax image is not stored
+butterfree-gmax image is not stored
+beedrill-mega image is not stored
+pidgeot-mega image is not stored
+rattata-alola image is not stored
+raticate-alola image is not stored
+raticate-totem-alola image is not stored
+raichu-alola image is not stored
+sandshrew-alola image is not stored
+sandslash-alola image is not stored
+vulpix-alola image is not stored
+ninetales-alola image is not stored
+diglett-alola image is not stored
+dugtrio-alola image is not stored
+meowth-alola image is not stored
+meowth-galar image is not stored
+meowth-gmax image is not stored
+persian-alola image is not stored
+growlithe-hisui image is not stored
+arcanine-hisui image is not stored
+alakazam-mega image is not stored
+machamp-gmax image is not stored
+geodude-alola image is not stored
+graveler-alola image is not stored
+golem-alola image is not stored
+ponyta-galar image is not stored
+rapidash-galar image is not stored
+slowpoke-galar image is not stored
+slowbro-mega image is not stored
+slowbro-galar image is not stored
+farfetch’d image is not stored
+farfetch’d-galar image is not stored
+grimer-alola image is not stored
+muk-alola image is not stored
+gengar-mega image is not stored
+gengar-gmax image is not stored
+kingler-gmax image is not stored
+voltorb-hisui image is not stored
+electrode-hisui image is not stored
+exeggutor-alola image is not stored
+marowak-alola image is not stored
+marowak-totem image is not stored
+weezing-galar image is not stored
+kangaskhan-mega image is not stored
+mr. mime image is not stored
+mr. mime-galar image is not stored
+pinsir-mega image is not stored
+gyarados-mega image is not stored
+lapras-gmax image is not stored
+eevee-starter image is not stored
+eevee-gmax image is not stored
+aerodactyl-mega image is not stored
+snorlax-gmax image is not stored
+articuno-galar image is not stored
+zapdos-galar image is not stored
+moltres-galar image is not stored
+mewtwo-mega-x image is not stored
+mewtwo-mega-y image is not stored
+typhlosion-hisui image is not stored
+ampharos-mega image is not stored
+slowking-galar image is not stored
+steelix-mega image is not stored
+qwilfish-hisui image is not stored
+scizor-mega image is not stored
+heracross-mega image is not stored
+sneasel-hisui image is not stored
+corsola-galar image is not stored
+houndoom-mega image is not stored
+tyranitar-mega image is not stored
+sceptile-mega image is not stored
+blaziken-mega image is not stored
+swampert-mega image is not stored
+zigzagoon-galar image is not stored
+linoone-galar image is not stored
+gardevoir-mega image is not stored
+sableye-mega image is not stored
+mawile-mega image is not stored
+aggron-mega image is not stored
+medicham-mega image is not stored
+manectric-mega image is not stored
+sharpedo-mega image is not stored
+camerupt-mega image is not stored
+altaria-mega image is not stored
+castform-sunny image is not stored
+castform-rainy image is not stored
+castform-snowy image is not stored
+banette-mega image is not stored
+absol-mega image is not stored
+glalie-mega image is not stored
+salamence-mega image is not stored
+metagross-mega image is not stored
+latias-mega image is not stored
+latios-mega image is not stored
+kyogre-primal image is not stored
+groudon-primal image is not stored
+rayquaza-mega image is not stored
+deoxys-attack image is not stored
+deoxys-defense image is not stored
+deoxys-speed image is not stored
+wormadam-sandy image is not stored
+wormadam-trash image is not stored
+lopunny-mega image is not stored
+mime jr. image is not stored
+garchomp-mega image is not stored
+lucario-mega image is not stored
+abomasnow-mega image is not stored
+gallade-mega image is not stored
+dialga-origin image is not stored
+palkia-origin image is not stored
+giratina-altered image is not stored
+giratina-origin image is not stored
+shaymin-sky image is not stored
+samurott-hisui image is not stored
+audino-mega image is not stored
+lilligant-hisui image is not stored
+basculin-red-striped image is not stored
+basculin-blue-striped image is not stored
+basculin-white-striped image is not stored
+darumaka-galar image is not stored
+darmanitan image is not stored
+darmanitan-galar image is not stored
+yamask-galar image is not stored
+garbodor-gmax image is not stored
+zorua-hisui image is not stored
+zoroark-hisui image is not stored
+stunfisk-galar image is not stored
+braviary-hisui image is not stored
+kyurem-black image is not stored
+kyurem-white image is not stored
+keldeo-resolute image is not stored
+meloetta-pirouette image is not stored
+floette-eternal image is not stored
+meowstic-f image is not stored
+aegislash-blade image is not stored
+sliggoo-hisui image is not stored
+goodra-hisui image is not stored
+pumpkaboo-small image is not stored
+pumpkaboo-large image is not stored
+pumpkaboo-super image is not stored
+gourgeist-small image is not stored
+gourgeist-large image is not stored
+gourgeist-super image is not stored
+avalugg-hisui image is not stored
+zygarde image is not stored
+zygarde-10-power-construct image is not stored
+zygarde-50-power-construct image is not stored
+zygarde-10% image is not stored
+diancie-mega image is not stored
+hoopa-unbound image is not stored
+decidueye-hisui image is not stored
+gumshoos-totem image is not stored
+vikavolt-totem image is not stored
+oricorio image is not stored
+oricorio-pa'u image is not stored
+ribombee-totem image is not stored
+rockruff-own-tempo image is not stored
+araquanid-totem image is not stored
+lurantis-totem image is not stored
+salazzle-totem image is not stored
+type: null image is not stored
+togedemaru-totem image is not stored
+mimikyu-busted image is not stored
+mimikyu-totem-disguised image is not stored
+mimikyu-totem-busted image is not stored
+kommo-o-totem image is not stored
+tapu koko image is not stored
+tapu lele image is not stored
+tapu bulu image is not stored
+tapu fini image is not stored
+necrozma-dusk-mane image is not stored
+necrozma-dawn-wings image is not stored
+necrozma-ultra image is not stored
+magearna-original image is not stored
+melmetal-gmax image is not stored
+rillaboom-gmax image is not stored
+cinderace-gmax image is not stored
+inteleon-gmax image is not stored
+corviknight-gmax image is not stored
+orbeetle-gmax image is not stored
+drednaw-gmax image is not stored
+coalossal-gmax image is not stored
+flapple-gmax image is not stored
+appletun-gmax image is not stored
+sandaconda-gmax image is not stored
+cramorant-gulping image is not stored
+cramorant-gorging image is not stored
+toxtricity-low-key image is not stored
+toxtricity-gmax image is not stored
+toxtricity-low-key-gmax image is not stored
+centiskorch-gmax image is not stored
+hatterene-gmax image is not stored
+grimmsnarl-gmax image is not stored
+sirfetch’d image is not stored
+mr. rime image is not stored
+alcremie-ruby-cream image is not stored
+alcremie-matcha-cream image is not stored
+alcremie-mint-cream image is not stored
+alcremie-lemon-cream image is not stored
+alcremie-salted-cream image is not stored
+alcremie-ruby-swirl image is not stored
+alcremie-caramel-swirl image is not stored
+alcremie-rainboy-swirl image is not stored
+alcremie-gmax image is not stored
+eiscue-noice image is not stored
+indeedee-f image is not stored
+morpeko-hangry image is not stored
+copperajah-gmax image is not stored
+duraludon-gmax image is not stored
+zacian-crowned image is not stored
+zamazenta-crowned image is not stored
+eternatus-eternamax image is not stored
+urshifu-rapid-strike image is not stored
+urshifu-gmax image is not stored
+urshifu-rapid-strike-gmax image is not stored
+zarude-dada image is not stored
+calyrex-ice image is not stored
+calyrex-shadow image is not stored
+ursaluna image is not stored
+basculegion-f image is not stored
+sneasler image is not stored
+overqwil image is not stored
+rotom-fan image is not stored
+rotom-frost image is not stored
+rotom-heat image is not stored
+rotom-mow image is not stored
+rotom-wash image is not stored
+pikachu-alola image is not stored
+pikachu-hoenn image is not stored
+pikachu-kalos image is not stored
+pikachu-original image is not stored
+pikachu-partner image is not stored
+pikachu-sinnoh image is not stored
+pikachu-unova image is not stored
+pikachu-world image is not stored
+pikachu-belle image is not stored
+pikachu-cosplay image is not stored
+pikachu-gmax image is not stored
+pikachu-libre image is not stored
+pikachu-phd image is not stored
+pikachu-pop-star image is not stored
+pikachu-rock-star image is not stored
+pikachu-starter image is not stored
