@@ -2,8 +2,8 @@
 - Login usando el usuario de telegram, contraseña por chat
 - Guardar los pokemon de un usuario en una "biblioteca" que se puedan reutilizar
 - Guardar la info de los items y de las habilidades
+- Añadir los movimientos que no sean de la última generación en la comprobación del equipo cuando no se encuentre el movimiento de primeras.
 
-Buscar fotos de los pokes que faltan (multiforma, Hisui, Alola, Galar, mega, gigamax)
 Revisar Greninja Battle Bond, Zygarde Power Construct, Rockruff Own Tempo (añadir habilidades a los pokémon en mongo)
 Stats:
     HP = floor(0.01 x (2 x Base + IV + floor(0.25 x EV)) x Level) + Level + 10
