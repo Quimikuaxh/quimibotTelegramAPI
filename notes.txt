@@ -110,8 +110,6 @@ hoopa-unbound image is not stored
 decidueye-hisui image is not stored
 gumshoos-totem image is not stored
 vikavolt-totem image is not stored
-oricorio image is not stored
-oricorio-pa'u image is not stored
 ribombee-totem image is not stored
 rockruff-own-tempo image is not stored
 araquanid-totem image is not stored
@@ -150,8 +148,6 @@ toxtricity-low-key-gmax image is not stored
 centiskorch-gmax image is not stored
 hatterene-gmax image is not stored
 grimmsnarl-gmax image is not stored
-sirfetch’d image is not stored
-mr. rime image is not stored
 alcremie-ruby-cream image is not stored
 alcremie-matcha-cream image is not stored
 alcremie-mint-cream image is not stored
