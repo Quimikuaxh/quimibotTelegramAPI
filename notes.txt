@@ -69,28 +69,13 @@ dialga-origin image is not stored
 palkia-origin image is not stored
 giratina-altered image is not stored
 giratina-origin image is not stored
-shaymin-sky image is not stored
-samurott-hisui image is not stored
 audino-mega image is not stored
 lilligant-hisui image is not stored
 basculin-red-striped image is not stored
 basculin-blue-striped image is not stored
 basculin-white-striped image is not stored
-darumaka-galar image is not stored
-darmanitan image is not stored
-darmanitan-galar image is not stored
 yamask-galar image is not stored
-garbodor-gmax image is not stored
-zorua-hisui image is not stored
-zoroark-hisui image is not stored
 stunfisk-galar image is not stored
-braviary-hisui image is not stored
-kyurem-black image is not stored
-kyurem-white image is not stored
-keldeo-resolute image is not stored
-meloetta-pirouette image is not stored
-floette-eternal image is not stored
-meowstic-f image is not stored
 aegislash-blade image is not stored
 sliggoo-hisui image is not stored
 goodra-hisui image is not stored
@@ -101,12 +86,7 @@ gourgeist-small image is not stored
 gourgeist-large image is not stored
 gourgeist-super image is not stored
 avalugg-hisui image is not stored
-zygarde image is not stored
-zygarde-10-power-construct image is not stored
-zygarde-50-power-construct image is not stored
-zygarde-10% image is not stored
 diancie-mega image is not stored
-hoopa-unbound image is not stored
 decidueye-hisui image is not stored
 gumshoos-totem image is not stored
 vikavolt-totem image is not stored
@@ -115,20 +95,11 @@ rockruff-own-tempo image is not stored
 araquanid-totem image is not stored
 lurantis-totem image is not stored
 salazzle-totem image is not stored
-type: null image is not stored
+type: null image is not stored: NO SE PUEDE (typenull)
 togedemaru-totem image is not stored
 mimikyu-busted image is not stored
 mimikyu-totem-disguised image is not stored
 mimikyu-totem-busted image is not stored
-kommo-o-totem image is not stored
-tapu koko image is not stored
-tapu lele image is not stored
-tapu bulu image is not stored
-tapu fini image is not stored
-necrozma-dusk-mane image is not stored
-necrozma-dawn-wings image is not stored
-necrozma-ultra image is not stored
-magearna-original image is not stored
 melmetal-gmax image is not stored
 rillaboom-gmax image is not stored
 cinderace-gmax image is not stored
@@ -140,8 +111,6 @@ coalossal-gmax image is not stored
 flapple-gmax image is not stored
 appletun-gmax image is not stored
 sandaconda-gmax image is not stored
-cramorant-gulping image is not stored
-cramorant-gorging image is not stored
 toxtricity-low-key image is not stored
 toxtricity-gmax image is not stored
 toxtricity-low-key-gmax image is not stored
@@ -157,42 +126,5 @@ alcremie-ruby-swirl image is not stored
 alcremie-caramel-swirl image is not stored
 alcremie-rainboy-swirl image is not stored
 alcremie-gmax image is not stored
-eiscue-noice image is not stored
-indeedee-f image is not stored
-morpeko-hangry image is not stored
 copperajah-gmax image is not stored
 duraludon-gmax image is not stored
-zacian-crowned image is not stored
-zamazenta-crowned image is not stored
-eternatus-eternamax image is not stored
-urshifu-rapid-strike image is not stored
-urshifu-gmax image is not stored
-urshifu-rapid-strike-gmax image is not stored
-zarude-dada image is not stored
-calyrex-ice image is not stored
-calyrex-shadow image is not stored
-ursaluna image is not stored
-basculegion-f image is not stored
-sneasler image is not stored
-overqwil image is not stored
-rotom-fan image is not stored
-rotom-frost image is not stored
-rotom-heat image is not stored
-rotom-mow image is not stored
-rotom-wash image is not stored
-pikachu-alola image is not stored
-pikachu-hoenn image is not stored
-pikachu-kalos image is not stored
-pikachu-original image is not stored
-pikachu-partner image is not stored
-pikachu-sinnoh image is not stored
-pikachu-unova image is not stored
-pikachu-world image is not stored
-pikachu-belle image is not stored
-pikachu-cosplay image is not stored
-pikachu-gmax image is not stored
-pikachu-libre image is not stored
-pikachu-phd image is not stored
-pikachu-pop-star image is not stored
-pikachu-rock-star image is not stored
-pikachu-starter image is not stored
