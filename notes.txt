@@ -16,7 +16,6 @@ salamence-mega image is not stored
 wormadam-sandy image is not stored
 wormadam-trash image is not stored
 lopunny-mega image is not stored
-mime jr. image is not stored
 garchomp-mega image is not stored
 lucario-mega image is not stored
 abomasnow-mega image is not stored
@@ -51,7 +50,7 @@ rockruff-own-tempo image is not stored
 araquanid-totem image is not stored
 lurantis-totem image is not stored
 salazzle-totem image is not stored
-type: null image is not stored: NO SE PUEDE (typenull)
+type: null image is not stored: NO SE PUEDE (type null)
 togedemaru-totem image is not stored
 mimikyu-busted image is not stored
 mimikyu-totem-disguised image is not stored
