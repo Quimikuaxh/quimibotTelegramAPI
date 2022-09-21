@@ -395,5 +395,3 @@ export class Pokemon {
         return res;
     }
 }
-
-Pokemon.getNonExistingPokemonImages();

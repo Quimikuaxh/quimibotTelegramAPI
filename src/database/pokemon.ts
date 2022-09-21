@@ -13,7 +13,7 @@ mongoose.connect(dbURL)
     // eslint-disable-next-line no-console
     .then(() => console.log("Connected to DB."))
     // eslint-disable-next-line no-console
-    .catch((e) => console.error("Error trying to connect to DB.\n\n")+e);
+    .catch((e) => console.error("Error trying to connect to DB.\n\n"+e));
 
 export async function getPokemonByName(name: string){
     const pokemonList = await PokemonModel.find({name: name});
