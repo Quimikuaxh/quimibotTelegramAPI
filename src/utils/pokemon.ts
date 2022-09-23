@@ -8,6 +8,9 @@ import {pokemonType_ES} from "../types/pokemonType_ES";
 import pokemonMove from "../types/pokemonMove";
 import fs from "fs";
 import pokemonMap from "../../files/pokemon.json";
+import effectivenesses from "../../files/effectiveness.json";
+import individualEffectiveness from "../types/individualEffectiveness";
+import pokemonEffectiveness from "../types/pokemonEffectiveness";
 
 export class Pokemon {
 
@@ -393,5 +396,100 @@ export class Pokemon {
             }
         }
         return res;
+    }
+
+    static getEffectivenesses(pokemon: pokemonInfo): pokemonEffectiveness{
+        const pokemonEffectivenesses = {
+            "FIRE": 1, "NORMAL": 1, "WATER": 1, "GRASS": 1,
+            "ELECTRIC": 1, "ICE": 1, "FIGHTING": 1, "POISON": 1,
+            "GROUND": 1, "FLYING": 1, "PSYCHIC": 1, "BUG": 1,
+            "ROCK": 1, "GHOST": 1, "DRAGON": 1, "DARK": 1,
+            "STEEL": 1, "FAIRY": 1
+        };
+        const pokemonStrengths: individualEffectiveness[] = [];
+        const pokemonWeaknesses: individualEffectiveness[] = [];
+        const pokemonImmune: individualEffectiveness[] = [];
+
+        for(const type of pokemon.types){
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const typeStrengths = effectivenesses[type.toUpperCase()].strengths;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const typeWeaknesses = effectivenesses[type.toUpperCase()].weaknesses;
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            const typeImmune = effectivenesses[type.toUpperCase()].immune;
+
+            for(const strength of typeStrengths){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonEffectivenesses[strength] = pokemonEffectivenesses[strength]/2;
+            }
+            for(const weakness of typeWeaknesses){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonEffectivenesses[weakness] = pokemonEffectivenesses[weakness]*2;
+            }
+            for(const immune of typeImmune){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonEffectivenesses[immune] = 0;
+            }
+        }
+
+        for (const effectiveness of Object.keys(pokemonEffectivenesses)){
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if(pokemonEffectivenesses[effectiveness] > 1){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                pokemonWeaknesses.push({type:effectiveness, effectiveness:pokemonEffectivenesses[effectiveness]})
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            else if(pokemonEffectivenesses[effectiveness] < 1 && pokemonEffectivenesses[effectiveness] > 0){
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                // @ts-ignore
+                pokemonStrengths.push({type:effectiveness, effectiveness:pokemonEffectivenesses[effectiveness]})
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            else if (pokemonEffectivenesses[effectiveness] === 0){
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    pokemonImmune.push({type:effectiveness, effectiveness:pokemonEffectivenesses[effectiveness]})
+            }
+        }
+        return {
+            strengths: pokemonStrengths,
+            weaknesses: pokemonWeaknesses,
+            immune: pokemonImmune
+        }
+    }
+
+    static effectivenessesString(pokemonEffectiveness: pokemonEffectiveness): string{
+        let res = "";
+
+        if(pokemonEffectiveness.strengths.length > 0){
+            res += "Strong against: \n";
+            for(const strength of pokemonEffectiveness.strengths){
+                res += `- ${strength.type} x${strength.effectiveness}\n`;
+            }
+        }
+        if(pokemonEffectiveness.weaknesses.length > 0){
+            res += "Weak against: \n";
+            for(const strength of pokemonEffectiveness.weaknesses){
+                res += `- ${strength.type} x${strength.effectiveness}\n`;
+            }
+        }
+        if(pokemonEffectiveness.immune.length > 0){
+            res += "Immune against: \n";
+            for(const strength of pokemonEffectiveness.immune){
+                res += `- ${strength.type}\n`;
+            }
+        }
+
+        return res.trim();
     }
 }
