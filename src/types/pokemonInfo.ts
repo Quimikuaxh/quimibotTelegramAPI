@@ -7,4 +7,5 @@ export default interface pokemonInfo {
     types: string[],
     stats: pokemonStats,
     moves: pokemonEdition[],
+    abilities: string[],
 }

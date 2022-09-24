@@ -4,9 +4,8 @@ import fs from 'fs';
 import request from 'request';
 
 //Load in BBDD
-/*import * as pokemonService from '../services/pokemonService';
-import pokemonData from "../../files/pokemoninfo.json";
-import pokemonInfo from "../types/pokemonInfo";*/
+import * as pokemonService from '../services/pokemonService';
+import pokemonInfo from "../types/pokemonInfo";
 
 export class Utils{
     private static WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
@@ -59,8 +58,10 @@ export class Utils{
     }
 
     //Load in BBDD
-    /*static async loadPokemonInDDBB(){
-        const array = pokemonData as pokemonInfo[];
+    static async loadPokemonInDDBB(){
+        const fileData = fs.readFileSync("./files/pokemoninfo.json", {encoding: 'utf-8', flag: 'r'});
+        const fileJson = JSON.parse(fileData);
+        const array = fileJson as pokemonInfo[];
         await this.sleep(10000);
         for(const pokemon of array){
             // eslint-disable-next-line no-console
@@ -73,6 +74,6 @@ export class Utils{
         return new Promise((resolve) => {
             setTimeout(resolve, ms);
         });
-    }*/
+    }
 }
 

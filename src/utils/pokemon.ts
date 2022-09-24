@@ -11,6 +11,7 @@ import pokemonMap from "../../files/pokemon.json";
 import effectivenesses from "../../files/effectiveness.json";
 import individualEffectiveness from "../types/individualEffectiveness";
 import pokemonEffectiveness from "../types/pokemonEffectiveness";
+import {Utils} from "./utils";
 
 export class Pokemon {
 
@@ -44,6 +45,26 @@ export class Pokemon {
         return pokemonType_ES[type.toUpperCase() as keyof typeof pokemonType_ES];
     }
 
+    static async savePokemonInfoInFile(pokemon: string): Promise<void>{
+        try{
+            const varietyResult = await axios.get(`${this.API_URL}/pokemon/${pokemon}`);
+            const varietyData = await varietyResult.data;
+
+            const jsonContent = JSON.stringify(varietyData);
+
+            fs.writeFile(`./files/info/${pokemon}.json`, jsonContent, 'utf8', function (err) {
+                if (err) {
+                    // eslint-disable-next-line no-console
+                    return console.log(err);
+                }
+            });
+        }catch (e) {
+            // eslint-disable-next-line no-console
+            console.log(pokemon);
+        }
+        await new Promise(resolve => setTimeout(resolve, 3000))
+    }
+
     static async getPokemonVarietyInfo(pokemon: string): Promise<pokemonInfo>{
         // eslint-disable-next-line no-console
         //console.log(pokemon);
@@ -59,15 +80,22 @@ export class Pokemon {
 
         const moves = await this.getPokemonMoves(varietyResult);
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const abilities: string[] = await varietyData.abilities.map((ability) =>  {
+            return ability.ability.name;
+        })
+
         const res = {
             name: varietyData.name,
             id: id,
             types: types,
             stats: stats,
             moves: moves,
+            abilities: abilities,
         };
         // eslint-disable-next-line no-console
-        console.log(JSON.stringify(res));
+        /*console.log(JSON.stringify(res));*/
         return res;
     }
 
@@ -81,19 +109,37 @@ export class Pokemon {
         const pokemonInfo = [];
         const pokemonLeft = [];
         for(const pokemon of uniq){
-            try{
-                // eslint-disable-next-line no-console
-                console.log(pokemon);
-                pokemonInfo.push(await this.getPokemonVarietyInfo(pokemon));
-            }catch (e) {
-                pokemonLeft.push(pokemon)
+            let count = 0;
+            const maxTries = 5;
+            // eslint-disable-next-line no-constant-condition
+            while(true){
+                try{
+                    // eslint-disable-next-line no-console
+                    console.log(pokemon);
+                    pokemonInfo.push(await this.getPokemonVarietyInfo(pokemon));
+                    await Utils.sleep(300);
+                    break;
+                }catch (e) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    // eslint-disable-next-line no-console
+                    console.log(e.message);
+                    await Utils.sleep(3000);
+                    if(++count === maxTries){
+                        // eslint-disable-next-line no-console
+                        console.log(pokemon + " has not been saved.");
+                        pokemonLeft.push(pokemon)
+                        break;
+                    }
+                }
             }
+
 
         }
 
         //const pokemonInfo = await Promise.all(pokemonList);
         // eslint-disable-next-line no-console
-        console.log(pokemonLeft);
+        console.log("Pokemon left:" + pokemonLeft);
 
         const jsonContent = JSON.stringify(pokemonInfo);
 
@@ -282,12 +328,19 @@ export class Pokemon {
 
         const promises = [];
 
+        let count = 0;
+
         //For each move, we get its info and each version in which the pokémon can learn the move
         for(const move of moves) {
             const moveURL = move.move.url;
 
             const moveName = move.move.name;
             const editions = move.version_group_details;
+
+            if(++count === 40) {
+                count = 0;
+                await Utils.sleep(500);
+            }
 
             promises.push(this.getAsyncPokemonMove(moveName, editions, moveURL));
         }
@@ -328,8 +381,8 @@ export class Pokemon {
         const moveData = await moveInfo.data;
 
         const effectChance = moveData.effect_chance == null ? 0 : moveData.effect_chance;
-        let description = moveData.effect_entries[moveData.effect_entries.length-1].effect;
-        description = description.replace("$effect_chance%");
+        let description = moveData.effect_entries[moveData.effect_entries.length-1]?.effect;
+        description = description?.replace("$effect_chance%", effectChance);
         //If accuracy or power are null, it takes no effect on the move
         const accuracy = moveData.accuracy == null ? 101 : moveData.accuracy;
         const power = moveData.power == null ? 0 : moveData.power;
@@ -491,5 +544,19 @@ export class Pokemon {
         }
 
         return res.trim();
+    }
+
+    static async getAllPokemonInfo(){
+        const list = Object.values(pokemonMap)
+
+        function onlyUnique(value: any, index: any, self: string | any[]) {
+            return self.indexOf(value) === index;
+        }
+
+        list.filter(onlyUnique);
+
+        for(const pokemon of list){
+            await Pokemon.savePokemonInfoInFile(pokemon);
+        }
     }
 }
