@@ -155,6 +155,20 @@ export class Pokemon {
         return pokemonInfo;
     }
 
+    static async getAllPokemonInfo(){
+        const list = Object.values(pokemonMap)
+
+        function onlyUnique(value: any, index: any, self: string | any[]) {
+            return self.indexOf(value) === index;
+        }
+
+        list.filter(onlyUnique);
+
+        for(const pokemon of list){
+            await Pokemon.savePokemonInfoInFile(pokemon);
+        }
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     static async getAllPokemonSpeciesInfo(): Promise<any>{
@@ -544,19 +558,5 @@ export class Pokemon {
         }
 
         return res.trim();
-    }
-
-    static async getAllPokemonInfo(){
-        const list = Object.values(pokemonMap)
-
-        function onlyUnique(value: any, index: any, self: string | any[]) {
-            return self.indexOf(value) === index;
-        }
-
-        list.filter(onlyUnique);
-
-        for(const pokemon of list){
-            await Pokemon.savePokemonInfoInFile(pokemon);
-        }
     }
 }

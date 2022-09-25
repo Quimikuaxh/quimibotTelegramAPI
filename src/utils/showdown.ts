@@ -5,6 +5,7 @@ import pokemonShowdown from "../types/pokemonShowdown";
 import pokemonStats from "../types/pokemonStats";
 import {getPokemonByName} from "../services/pokemonService";
 import {Pokemon} from "./pokemon";
+import * as pokemonService from "../services/pokemonService";
 
 export class Showdown{
 
@@ -39,12 +40,6 @@ export class Showdown{
 
             for(const pokemon of pokemonList){
                 const pokemonRows = pokemon.split('\n').map(ev => ev.trim());
-                const pokemonParsed:pokemonShowdown = {
-                    name: "Missigno",
-                    shiny: false,
-                    level: "100",
-                };
-
                 let evs:pokemonStats = {
                     hp: 0,
                     attack: 0,
@@ -60,6 +55,15 @@ export class Showdown{
                     spAtk: 31,
                     spDef: 31,
                     speed: 31
+                };
+
+                const pokemonParsed:pokemonShowdown = {
+                    name: "Missigno",
+                    shiny: false,
+                    level: 100,
+                    EVs: evs,
+                    IVs: ivs,
+                    nature: "Serious"
                 };
 
                 // First row
@@ -94,7 +98,10 @@ export class Showdown{
                             pokemonParsed.ability = pokemonRows[i].replace('Ability: ', '').trim();
                         }
                         else if(pokemonRows[i].startsWith('Level:')){
-                            pokemonParsed.level = pokemonRows[i].replace('Level: ', '').trim();
+                            if(isNaN(parseInt(pokemonRows[i].replace('Level: ', '').trim()))){
+                                throw new Error(`Level is not a number.`);
+                            }
+                            pokemonParsed.level = parseInt(pokemonRows[i].replace('Level: ', '').trim());
                         }
                         else if(pokemonRows[i].startsWith('EVs:')){
                             const splitEvs = pokemonRows[i].replace('EVs: ', '').trim().split('/').map(ev => ev.trim());
@@ -125,6 +132,35 @@ export class Showdown{
             console.error(e)
             throw e;
         }
+    }
+
+    static getFinalStats(pokemon: pokemonShowdown): pokemonStats{
+        const res: pokemonStats = {
+            hp: 0,
+            attack: 0,
+            defense: 0,
+            spAtk: 0,
+            spDef: 0,
+            speed: 0
+        };
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const pokemonInfo = pokemonService.getPokemonVarietyInfo(pokemonMap[pokemon.name]);
+
+        res.hp = Math.floor(0.01*(2*pokemonInfo.stats.hp + pokemon.IVs.hp + Math.floor(0.25*pokemon.EVs.hp))*pokemon.level) + pokemon.level + 10;
+
+        function calcStat(iv: number, ev: number, level: number, base: number, nature: number): number{
+            return Math.floor((0.01*(2*base + iv + Math.floor(0.25*ev))*level) + 5 * nature);
+        }
+
+        //TODO: Add natures
+        res.attack = calcStat(pokemon.IVs.attack, pokemon.EVs.attack, pokemon.level, pokemonInfo.stats.attack, 1);
+        res.defense = calcStat(pokemon.IVs.defense, pokemon.EVs.defense, pokemon.level, pokemonInfo.stats.defense, 1);
+        res.spAtk = calcStat(pokemon.IVs.spAtk, pokemon.EVs.spAtk, pokemon.level, pokemonInfo.stats.spAtk, 1);
+        res.spDef = calcStat(pokemon.IVs.spDef, pokemon.EVs.spDef, pokemon.level, pokemonInfo.stats.spDef, 1);
+        res.speed = calcStat(pokemon.IVs.speed, pokemon.EVs.speed, pokemon.level, pokemonInfo.stats.speed, 1);
+
+        return res;
     }
 
     static async translateMoves(pokemon: string, moves: string[]){

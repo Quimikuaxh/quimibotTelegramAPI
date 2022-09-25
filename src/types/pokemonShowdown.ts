@@ -6,9 +6,9 @@ export default interface pokemonShowdown {
     item?: string,
     shiny?:boolean,
     ability?: string,
-    level?: string,
-    nature?: string,
+    level: number,
+    nature: string,
     moves?: string[],
-    IVs?: pokemonStats,
-    EVs?: pokemonStats,
+    IVs: pokemonStats,
+    EVs: pokemonStats,
 }
