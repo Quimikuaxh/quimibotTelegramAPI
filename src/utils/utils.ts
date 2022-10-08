@@ -2,14 +2,19 @@ import * as cheerio from "cheerio";
 import axios from 'axios';
 import fs from 'fs';
 import request from 'request';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import xpath from 'xpath-html';
 
 //Load in BBDD
 import * as pokemonService from '../services/pokemonService';
 import pokemonInfo from "../types/pokemonInfo";
 
 export class Utils{
-    private static WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
-    private static  API_URL = "https://pokeapi.co/api/v2/pokemon";
+    private static SEARCH_WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
+    private static WIKI_URL = "https://www.wikidex.net/wiki/";
+    private static WIKI_BASE_URL = "https://www.wikidex.net";
+    private static API_URL = "https://pokeapi.co/api/v2/pokemon";
 
     static async downloadFullImage(from: number, to: number): Promise<void>{
         for(let i=from ; i<=to; i++){
@@ -17,7 +22,7 @@ export class Utils{
             const name = result.data.species.name;
             try{
                 let res = '';
-                let searchResult = await axios.get(this.WIKI_URL + name);
+                let searchResult = await axios.get(this.SEARCH_WIKI_URL + name);
                 let html = searchResult.data;
                 let $ = cheerio.load(html)
                 const pokemonURL = $('a.unified-search__result__title', html).first().attr('href')
@@ -40,7 +45,81 @@ export class Utils{
                 console.log(`${name} was not downloaded.`);
             }
         }
+    }
 
+    static async downloadNewestImage(list: string[]): Promise<void>{
+        for(const name of list){
+            try{
+                let species = name;
+                if(name.includes("mega")){
+                    species = name.replace("-mega", "");
+                    const result = await axios.get(this.WIKI_URL + '/'+ species);
+                    const html = await result.data;
+                    const node = xpath.fromPageSource(html).findElement("//img[contains(@alt, 'Imagen de Mega-')]");
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    this.download(node.getAttribute("src"), "./images/newest/"+name+".png", function(){});
+                }
+                else if(name.includes("gmax")){
+                    species = name.replace("-gmax", "");
+                    const result = await axios.get(this.WIKI_URL + '/'+ species);
+                    const html = await result.data;
+                    const node = xpath.fromPageSource(html).findElement("//img[contains(@alt, 'Gigamax en Pokémon Espada y Pokémon Escudo')]");
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    this.download(node.getAttribute("src"), "./images/newest/"+name+".png", function(){});
+                }
+                else if(name.includes("alola")){
+                    species = name.replace("-alola", "");
+                    const result = await axios.get(this.WIKI_URL + '/'+ species);
+                    let html = await result.data;
+                    let node = xpath.fromPageSource(html).findElement("//a[contains(text(), ' de Alola')]");
+
+                    const regionalResult = await axios.get(this.WIKI_BASE_URL.concat(node.getAttribute("href")));
+                    html = regionalResult.data;
+                    const nodes = xpath.fromPageSource(html).findElements("//img[contains(@src, 'gif') and ((contains(@alt, 'Espada') and not(contains(@alt, 'Gigamax'))) or contains(@alt, 'Pokémon Sol') or contains(@alt, 'Pokémon X')) and not(contains(@alt, 'variocolor')) and not(contains(@alt, 'hembra'))]");
+                    node = nodes[nodes.length-1];
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    this.download(node.getAttribute("src"), "./images/newest/"+name+".png", function(){});
+                }
+                else if(name.includes("galar")){
+                    species = name.replace("-galar", "");
+                    const result = await axios.get(this.WIKI_URL + '/'+ species);
+                    let html = await result.data;
+                    let node = xpath.fromPageSource(html).findElement("//a[contains(text(), ' de Galar')]");
+
+                    const regionalResult = await axios.get(this.WIKI_BASE_URL.concat(node.getAttribute("href")));
+                    html = regionalResult.data;
+                    const nodes = xpath.fromPageSource(html).findElements("//img[contains(@src, 'gif') and ((contains(@alt, 'Espada') and not(contains(@alt, 'Gigamax'))) or contains(@alt, 'Pokémon Sol') or contains(@alt, 'Pokémon X')) and not(contains(@alt, 'variocolor')) and not(contains(@alt, 'hembra'))]");
+                    node = nodes[nodes.length-1];
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    this.download(node.getAttribute("src"), "./images/newest/"+name+".png", function(){});
+                }
+                else if(name.includes("hisui")){
+                    species = name.replace("-hisui", "");
+                    const result = await axios.get(this.WIKI_URL + '/'+ species);
+                    let html = await result.data;
+                    let node = xpath.fromPageSource(html).findElement("//a[contains(text(), ' de Hisui')]");
+
+                    const regionalResult = await axios.get(this.WIKI_BASE_URL.concat(node.getAttribute("href")));
+                    html = regionalResult.data;
+                    const nodes = xpath.fromPageSource(html).findElements("//img[contains(@src, 'png') and ((contains(@alt, 'Espada') and not(contains(@alt, 'Gigamax'))) or contains(@alt, 'Pokémon Sol') or contains(@alt, 'Pokémon X')) and not(contains(@alt, 'variocolor')) and not(contains(@alt, 'hembra'))]");
+                    node = nodes[nodes.length-1];
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    this.download(node.getAttribute("src"), "./images/newest/"+name+".png", function(){});
+                }
+                else{
+                    const result = await axios.get(this.WIKI_URL + '/'+ species);
+                    const html = await result.data;
+                    const nodes = xpath.fromPageSource(html).findElements("//img[contains(@src, 'png') and ((contains(@alt, 'Espada') and not(contains(@alt, 'Gigamax'))) or contains(@alt, 'Pokémon Sol') or contains(@alt, 'Pokémon X')) and not(contains(@alt, 'variocolor')) and not(contains(@alt, 'hembra'))]");
+                    const node = nodes[nodes.length-1];
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    this.download(node.getAttribute("src"), "./images/newest/"+name+".png", function(){});
+                }
+            }
+            catch(e){
+                // eslint-disable-next-line no-console
+                console.log(`${name} was not downloaded.`);
+            }
+        }
     }
 
     static download(uri: string, filename: fs.PathLike, callback: { (): void; (): void; }){

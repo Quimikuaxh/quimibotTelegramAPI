@@ -309,8 +309,6 @@ export class Pokemon {
         return stats;
     }
 
-
-
     static async getImageFromWiki(pokemonName: string): Promise<string>{
         let res = '';
         let searchResult = await axios.get(this.WIKI_URL + pokemonName);
