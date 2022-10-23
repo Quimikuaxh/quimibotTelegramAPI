@@ -1,0 +1,23 @@
+{
+  "pikachu": {
+    "name": "pikachu",
+    "level": 100,
+    "nature": "modest",
+    "IVs": {
+      "hp": 31,
+      "attack": 31,
+      "defense": 31,
+      "spAtk": 31,
+      "spDef": 31,
+      "speed": 31
+    },
+    "EVs": {
+      "hp": 4,
+      "attack": 52,
+      "defense": 76,
+      "spAtk": 124,
+      "spDef": 0,
+      "speed": 252
+    }
+  }
+}

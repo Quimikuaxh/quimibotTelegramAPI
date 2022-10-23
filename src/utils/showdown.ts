@@ -1,11 +1,14 @@
 import {Utils} from "./utils";
 import axios from "axios";
 import pokemonMap from "../../files/pokemon.json";
+import natures from "../../files/nature.json";
 import pokemonShowdown from "../types/pokemonShowdown";
 import pokemonStats from "../types/pokemonStats";
-import {getPokemonByName} from "../services/pokemonService";
 import {Pokemon} from "./pokemon";
 import * as pokemonService from "../services/pokemonService";
+
+// Testing
+//import pokemonShowdownTesting from "../../files/test/pokemonShowdown.json";
 
 export class Showdown{
 
@@ -83,7 +86,7 @@ export class Showdown{
                     throw new Error(`Pokémon name ${pokemonParsed.name} is not correct`);
                 }
                 else{
-                    pokemonInDB = await getPokemonByName(pokemonName);
+                    pokemonInDB = await pokemonService.getPokemonByName(pokemonName);
                     if(pokemonInDB === undefined){
                         throw new Error(`Pokémon ${pokemonName} was not found in DB`);
                     }
@@ -134,7 +137,7 @@ export class Showdown{
         }
     }
 
-    static getFinalStats(pokemon: pokemonShowdown): pokemonStats{
+    static async getFinalStats(pokemon: pokemonShowdown): Promise<pokemonStats>{
         const res: pokemonStats = {
             hp: 0,
             attack: 0,
@@ -143,28 +146,53 @@ export class Showdown{
             spDef: 0,
             speed: 0
         };
+        await new Promise((resolve) => {
+            setTimeout(resolve, 5000);
+        });
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const pokemonInfo = pokemonService.getPokemonVarietyInfo(pokemonMap[pokemon.name]);
+        const pokemonInfo = await pokemonService.getPokemonByName(pokemonMap[pokemon["name"]]);
+        const pokemonNature = pokemon["nature"];
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const nature = natures[pokemonNature];
+
+        // eslint-disable-next-line no-console
+        console.log(JSON.stringify(nature));
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         res.hp = Math.floor(0.01*(2*pokemonInfo.stats.hp + pokemon.IVs.hp + Math.floor(0.25*pokemon.EVs.hp))*pokemon.level) + pokemon.level + 10;
 
         function calcStat(iv: number, ev: number, level: number, base: number, nature: number): number{
-            return Math.floor((0.01*(2*base + iv + Math.floor(0.25*ev))*level) + 5 * nature);
+            return Math.floor(((0.01*(2*base + iv + Math.floor(0.25*ev))*level) + 5) * nature);
         }
 
-        //TODO: Add natures
-        res.attack = calcStat(pokemon.IVs.attack, pokemon.EVs.attack, pokemon.level, pokemonInfo.stats.attack, 1);
-        res.defense = calcStat(pokemon.IVs.defense, pokemon.EVs.defense, pokemon.level, pokemonInfo.stats.defense, 1);
-        res.spAtk = calcStat(pokemon.IVs.spAtk, pokemon.EVs.spAtk, pokemon.level, pokemonInfo.stats.spAtk, 1);
-        res.spDef = calcStat(pokemon.IVs.spDef, pokemon.EVs.spDef, pokemon.level, pokemonInfo.stats.spDef, 1);
-        res.speed = calcStat(pokemon.IVs.speed, pokemon.EVs.speed, pokemon.level, pokemonInfo.stats.speed, 1);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        res.attack = calcStat(pokemon.IVs.attack, pokemon.EVs.attack, pokemon.level, pokemonInfo.stats.attack, nature.attack);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        res.defense = calcStat(pokemon.IVs.defense, pokemon.EVs.defense, pokemon.level, pokemonInfo.stats.defense, nature.defense);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        res.spAtk = calcStat(pokemon.IVs.spAtk, pokemon.EVs.spAtk, pokemon.level, pokemonInfo.stats.spAtk, nature.spAtk);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        res.spDef = calcStat(pokemon.IVs.spDef, pokemon.EVs.spDef, pokemon.level, pokemonInfo.stats.spDef, nature.spDef);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        res.speed = calcStat(pokemon.IVs.speed, pokemon.EVs.speed, pokemon.level, pokemonInfo.stats.speed, nature.speed);
+
+        // eslint-disable-next-line no-console
+        console.log(JSON.stringify(res));
 
         return res;
     }
 
     static async translateMoves(pokemon: string, moves: string[]){
-        const savedPokemon = await getPokemonByName(pokemon.toLowerCase());
+        const savedPokemon = await pokemonService.getPokemonByName(pokemon.toLowerCase());
         const translatedMoves = [];
         const translatedNames: string[] = [];
         const savedMoves = savedPokemon.moves[savedPokemon.moves.length - 1];
