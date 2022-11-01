@@ -10,7 +10,7 @@ import xpath from 'xpath-html';
 import * as pokemonService from '../services/pokemonService';
 import pokemonInfo from "../types/pokemonInfo";
 //Load images
-import pokemonMap from "../../files/pokemon.json";
+//import pokemonMap from "../../files/pokemon.json";
 
 export class Utils{
     private static SEARCH_WIKI_URL = "https://pokemon.fandom.com/es/wiki/Especial:Buscar?query=";
@@ -211,8 +211,4 @@ export class Utils{
         return word.charAt(0).toUpperCase() + word.slice(1);
     }
 }
-
-Utils.downloadWikiImage(Object.values(pokemonMap), "icon");
-
-//Utils.downloadNewestImage(["pikachu"]);
 

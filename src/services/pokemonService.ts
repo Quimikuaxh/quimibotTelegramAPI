@@ -5,6 +5,9 @@ import team from "../types/team";
 export function getAllPokemon(){
     return pokemonDB.getAllPokemon();
 }
+export function getPokemonList(){
+    return pokemonDB.getPokemonList();
+}
 export function getPokemonByID(idNumber: number){
     return pokemonDB.getPokemonByNumber(idNumber);
 }

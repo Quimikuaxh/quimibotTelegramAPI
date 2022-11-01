@@ -10,6 +10,11 @@ export async function getAllPokemon(_req: express.Request, res: express.Response
     res.send(allPokemon);
 }
 
+export async function getPokemonList(_req: express.Request, res: express.Response){
+    const pokemonList = await pokemonService.getPokemonList();
+    res.send(pokemonList);
+}
+
 export async function getPokemon(req: express.Request, res: express.Response){
     let pokemon;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

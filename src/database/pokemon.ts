@@ -27,6 +27,10 @@ export async function getPokemonByNumber(idNumber: number){
     return pokemonList[0];
 }
 
+export async function getPokemonList(){
+    return PokemonModel.find({}).select('name');
+}
+
 export async function createPokemon(pokemonReceived: pokemonInfo ){
     const pokemon = new PokemonModel(pokemonReceived)
 
