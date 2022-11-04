@@ -4,7 +4,7 @@ import pokemonInfo from "../types/pokemonInfo";
 import team from "../types/team";
 import pokemonShowdown from "../types/pokemonShowdown";
 import {Showdown} from "../utils/showdown";
-import stringSimilarity from 'string-similarity';
+import {Pokemon} from "../utils/pokemon";
 
 export async function getAllPokemon(_req: express.Request, res: express.Response){
     const allPokemon = await pokemonService.getAllPokemon();
@@ -18,21 +18,16 @@ export async function getPokemonList(_req: express.Request, res: express.Respons
 
 export async function getPokemon(req: express.Request, res: express.Response){
     let pokemon;
-    const pokemonList = await pokemonService.getPokemonList();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const pokemonArray: string[] = pokemonList.map((pokemonObject) => {
-        return pokemonObject.name;
-    }) || [];
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     if(isNaN(req.params.pokemonId)){
-        const finalPokemon = stringSimilarity.findBestMatch(req.params.pokemonId, pokemonArray).bestMatch.target;
+        const finalPokemon = await Pokemon.getSimilarPokemon(req.params.pokemonId);
         if(finalPokemon){
-            pokemon = await pokemonService.getPokemonByName(finalPokemon)
+            pokemon = await pokemonService.getPokemonByName(finalPokemon);
         }
         else{
-            pokemon = await pokemonService.getPokemonByName(req.params.pokemonId)
+            pokemon = await pokemonService.getPokemonByName(req.params.pokemonId);
         }
     }
     else{

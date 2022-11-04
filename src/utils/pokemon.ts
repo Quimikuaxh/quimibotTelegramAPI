@@ -12,6 +12,8 @@ import effectivenesses from "../../files/effectiveness.json";
 import individualEffectiveness from "../types/individualEffectiveness";
 import pokemonEffectiveness from "../types/pokemonEffectiveness";
 import {Utils} from "./utils";
+import * as pokemonService from "../services/pokemonService";
+import stringSimilarity from "string-similarity";
 
 export class Pokemon {
 
@@ -43,6 +45,17 @@ export class Pokemon {
 
     static translateType(type:string): string{
         return pokemonType_ES[type.toUpperCase() as keyof typeof pokemonType_ES];
+    }
+
+    static async getSimilarPokemon(pokemon: string): Promise<string>{
+        const pokemonList = await pokemonService.getPokemonList();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const pokemonArray: string[] = pokemonList.map((pokemonObject) => {
+            return pokemonObject.name;
+        }) || [];
+
+        return stringSimilarity.findBestMatch(pokemon, pokemonArray).bestMatch.target;
     }
 
     static async savePokemonInfoInFile(pokemon: string): Promise<void>{

@@ -2,6 +2,9 @@ import '../env/env';
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs'
 import {Showdown} from "./utils/showdown";
+import {Pokemon} from "./utils/pokemon";
+import {resolve} from "path";
+import {Utils} from "./utils/utils";
 
 const token = process.env.BOT_TOKEN ?? "tokenVacio"
 
@@ -22,8 +25,8 @@ bot.onText(/\/start/, async (msg) => {
 
 bot.onText(/\/covid/, async (msg) => {
   const chatId = msg.chat.id
-
-    try{
+  bot.sendMessage(chatId, "Khe? El covis ya no existe.");
+    /*try{
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
         const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -35,21 +38,25 @@ bot.onText(/\/covid/, async (msg) => {
         // eslint-disable-next-line no-console
         console.error(e)
         bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.")
-    }
+    }*/
 })
 
-/*bot.onText(/\/pokemon/, async (msg) => {
+bot.onText(/\/pokemon/, async (msg) => {
     const chatId = msg.chat.id
     const messageText = msg.text;
     try{
         const pokemonName = messageText?.replace("/pokemon", "").trim().toLowerCase();
         if(pokemonName){
-            const pokemon = await Pokemon.getPokemonInfo(pokemonName);
-            const pokemonImage = await Pokemon.getImageFromWiki(pokemon.name);
+            const pokemon = await Pokemon.getSimilarPokemon(pokemonName);
             if(pokemon){
-                await bot.sendPhoto(chatId, pokemonImage, {caption : `*${pokemon.name}*\n\n` +
-                        `*Types:* ${pokemon.types}\n\n` +
-                        'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"});
+                const capitalizedPokemon = Utils.capitalizeFirstLetter(pokemon);
+                const pokemonImage = resolve(__dirname, `../images/fullImage/${pokemon}.png`);
+                const image = fs.readFileSync(pokemonImage);
+                // eslint-disable-next-line no-console
+                console.log(pokemonImage);
+                await bot.sendPhoto(chatId, image, {caption : `*${capitalizedPokemon}*\n\n` +
+                        //`*Types:* ${pokemon.types}\n\n` +
+                        'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"}, {filename: `${pokemon}.png`, contentType: 'application/octet-stream'});
             }
             else{
                 await bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")
@@ -63,7 +70,7 @@ bot.onText(/\/covid/, async (msg) => {
         console.error(e)
         bot.sendMessage(chatId, "Se ha producido un error. Por favor, inténtalo de nuevo más tarde.");
     }
-})*/
+})
 
 bot.onText(/\/team/, async (msg) => {
     const chatId = msg.chat.id
