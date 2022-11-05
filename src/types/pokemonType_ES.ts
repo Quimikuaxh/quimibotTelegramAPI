@@ -2,7 +2,7 @@ export enum pokemonType_ES {
     FIRE = 'fuego',
     WATER = 'agua',
     GRASS = 'planta',
-    NORMAL = 'fuego',
+    NORMAL = 'normal',
     DARK = 'siniestro',
     GHOST = 'fantasma',
     PSYCHIC = 'psíquico',

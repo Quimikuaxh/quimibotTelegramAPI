@@ -22,13 +22,18 @@ export async function getPokemonByName(name: string){
     return pokemonList[0];
 }
 
+export async function getResumedPokemonByName(name: string){
+    const pokemonList = await PokemonModel.find({name: name}, {moves: false});
+    return pokemonList[0];
+}
+
 export async function getPokemonByNumber(idNumber: number){
     const pokemonList = await PokemonModel.find({id: idNumber});
     return pokemonList[0];
 }
 
 export async function getPokemonList(){
-    return PokemonModel.find({}).select('name');
+    return PokemonModel.find({}, {name: true, id: true, types: true, abilities: true, stats: true});
 }
 
 export async function createPokemon(pokemonReceived: pokemonInfo ){

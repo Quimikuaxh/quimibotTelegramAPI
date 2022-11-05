@@ -5,11 +5,13 @@ import {Showdown} from "./utils/showdown";
 import {Pokemon} from "./utils/pokemon";
 import {resolve} from "path";
 import {Utils} from "./utils/utils";
+import {BotUtils} from "./utils/botUtils";
+import * as PokemonService from './services/pokemonService';
+import pokemonStats from "./types/pokemonStats";
+import pokemonInfo from "./types/pokemonInfo";
+import {pokemonType_ES} from "./types/pokemonType_ES";
 
 const token = process.env.BOT_TOKEN ?? "tokenVacio"
-
-// eslint-disable-next-line no-console
-console.log(token);
 
 const bot = new TelegramBot(token, {
     polling: true,
@@ -49,14 +51,66 @@ bot.onText(/\/pokemon/, async (msg) => {
         if(pokemonName){
             const pokemon = await Pokemon.getSimilarPokemon(pokemonName);
             if(pokemon){
-                const capitalizedPokemon = Utils.capitalizeFirstLetter(pokemon);
                 const pokemonImage = resolve(__dirname, `../images/fullImage/${pokemon}.png`);
                 const image = fs.readFileSync(pokemonImage);
-                // eslint-disable-next-line no-console
-                console.log(pokemonImage);
-                await bot.sendPhoto(chatId, image, {caption : `*${capitalizedPokemon}*\n\n` +
-                        //`*Types:* ${pokemon.types}\n\n` +
-                        'Esto está aún en construcción. No impacientes, seguro que en no mucho tiempo tienes toda la información que esperabas.', parse_mode: "Markdown"}, {filename: `${pokemon}.png`, contentType: 'application/octet-stream'});
+                const pokemonData = await PokemonService.getResumedPokemonByName(pokemon);
+                let textToSend = `*${pokemon.toUpperCase()}*\n\n`;
+                textToSend += '*Tipos:*\n';
+                for(const type of pokemonData.types){
+                    textToSend += BotUtils.getTypeString(type);
+                }
+                textToSend += '\n*Habilidades:*\n';
+                for(const ability of pokemonData.abilities){
+                    textToSend += `- ${Utils.capitalizeFirstLetter(ability)}\n`;
+                }
+                textToSend += '\n*Estadísticas base:*\n';
+                textToSend += BotUtils.getStatsString(pokemonData.stats as pokemonStats);
+
+                textToSend += '\n\n*Efectividades y resistencias:*\n';
+                const effectivenesses = Pokemon.getEffectivenesses(pokemonData as pokemonInfo);
+                if(effectivenesses.weaknesses.length > 0){
+                    textToSend += '- Recibe muy efectivo contra:\n';
+                    let isNotFirst = false;
+                    for(const weakness of effectivenesses.weaknesses){
+                        if(isNotFirst){
+                            textToSend += ', ';
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        textToSend += `${Utils.capitalizeFirstLetter(pokemonType_ES[weakness.type])} x${weakness.effectiveness}`
+                        isNotFirst = true;
+                    }
+                    textToSend += '\n\n'
+                }
+                if(effectivenesses.strengths.length > 0){
+                    textToSend += '- Recibe poco efectivo contra:\n';
+                    let isNotFirst = false;
+                    for(const strength of effectivenesses.strengths){
+                        if(isNotFirst){
+                            textToSend += ', ';
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        textToSend += `${Utils.capitalizeFirstLetter(pokemonType_ES[strength.type])} x${strength.effectiveness}`
+                        isNotFirst = true;
+                    }
+                    textToSend += '\n\n'
+                }
+                if(effectivenesses.immune.length > 0){
+                    textToSend += '- Es inmune a:\n';
+                    let isNotFirst = false;
+                    for(const immune of effectivenesses.immune){
+                        if(isNotFirst){
+                            textToSend += ', ';
+                        }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        textToSend +=`${Utils.capitalizeFirstLetter(pokemonType_ES[immune.type])}`
+                        isNotFirst = true;
+                    }
+                }
+
+                await bot.sendPhoto(chatId, image, {caption : textToSend, parse_mode: "Markdown"}, {filename: `${pokemon}.png`, contentType: 'application/octet-stream'});
             }
             else{
                 await bot.sendMessage(chatId, "No se ha encontrado el pokémon que indicabas.")

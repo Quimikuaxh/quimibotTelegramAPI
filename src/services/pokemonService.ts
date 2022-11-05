@@ -14,6 +14,9 @@ export function getPokemonByID(idNumber: number){
 export function getPokemonByName(name: string){
     return pokemonDB.getPokemonByName(name);
 }
+export function getResumedPokemonByName(name: string){
+    return pokemonDB.getResumedPokemonByName(name);
+}
 export function createPokemon(pokemon:pokemonInfo){
     return pokemonDB.createPokemon(pokemon);
 }

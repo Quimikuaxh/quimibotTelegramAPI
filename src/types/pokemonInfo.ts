@@ -6,6 +6,6 @@ export default interface pokemonInfo {
     id: number,
     types: string[],
     stats: pokemonStats,
-    moves: pokemonEdition[],
+    moves?: pokemonEdition[],
     abilities: string[],
 }

@@ -48,6 +48,7 @@ export class Pokemon {
     }
 
     static async getSimilarPokemon(pokemon: string): Promise<string>{
+        pokemon.toLowerCase().replace('gigamax', 'gmax');
         const pokemonList = await pokemonService.getPokemonList();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
