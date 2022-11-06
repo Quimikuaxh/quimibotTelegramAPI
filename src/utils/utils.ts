@@ -5,6 +5,7 @@ import request from 'request';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import xpath from 'xpath-html';
+import pokemonMap from '../../files/pokemon.json';
 
 //Load in BBDD
 import * as pokemonService from '../services/pokemonService';
@@ -186,6 +187,12 @@ export class Utils{
             .replace(/\(/g, "%28").replace(/\)/g, "%29")
             .replace(/\//g, "%2F").replace(/:/g, "%3A")
             .replace(/@/g, "%40").replace(/'/g, "%27");
+    }
+
+    static getKeyByValue(value: string): string {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return Object.keys(pokemonMap).find(key => pokemonMap[key] === value);
     }
 
     //Load in BBDD

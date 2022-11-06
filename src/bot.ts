@@ -51,17 +51,17 @@ bot.onText(/\/pokemon/, async (msg) => {
         if(pokemonName){
             const pokemon = await Pokemon.getSimilarPokemon(pokemonName);
             if(pokemon){
-                const pokemonImage = resolve(__dirname, `../images/fullImage/${pokemon}.png`);
+                const pokemonImage = resolve(__dirname, `../images/fullImage/${Utils.getKeyByValue(pokemon)}.png`);
                 const image = fs.readFileSync(pokemonImage);
                 const pokemonData = await PokemonService.getResumedPokemonByName(pokemon);
-                let textToSend = `*${pokemon.toUpperCase()}*\n\n`;
+                let textToSend = `*${pokemon.replaceAll(/-/g, ' ').toUpperCase()}*\n\n`;
                 textToSend += '*Tipos:*\n';
                 for(const type of pokemonData.types){
                     textToSend += BotUtils.getTypeString(type);
                 }
                 textToSend += '\n*Habilidades:*\n';
                 for(const ability of pokemonData.abilities){
-                    textToSend += `- ${Utils.capitalizeFirstLetter(ability)}\n`;
+                    textToSend += `- ${Utils.capitalizeFirstLetter(ability.replaceAll(/-/g, ' '))}\n`;
                 }
                 textToSend += '\n*Estadísticas base:*\n';
                 textToSend += BotUtils.getStatsString(pokemonData.stats as pokemonStats);
