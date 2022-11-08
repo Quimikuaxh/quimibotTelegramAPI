@@ -48,13 +48,52 @@ export class Pokemon {
     }
 
     static async getSimilarPokemon(pokemon: string): Promise<string>{
-        pokemon.toLowerCase().replace('gigamax', 'gmax');
+        const modifiedPokemon = pokemon.toLowerCase().replace('gigamax', 'gmax');
         const pokemonList = await pokemonService.getPokemonList();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const pokemonArray: string[] = pokemonList.map((pokemonObject) => {
-            return pokemonObject.name;
-        }) || [];
+
+        const pokemonContaining = [];
+        const splittedPokemon = modifiedPokemon.split(' ');
+
+        for(const pokemonObject of pokemonList){
+            let hasAllPieces = true;
+            for(const piece of splittedPokemon){
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                if(!(await pokemonObject).name.includes(piece)){
+                    hasAllPieces = false;
+                    break;
+                }
+            }
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            if(hasAllPieces && !(await pokemonObject).name.includes('totem')){
+                pokemonContaining.push(pokemonObject);
+            }
+        }
+        let pokemonArray: string[];
+
+        if(pokemonContaining.length > 0){
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            pokemonArray = pokemonContaining.filter((pokemonObject) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return !pokemonObject.name.includes('totem');
+            }).map((pokemonObject) => {
+                return pokemonObject.name;
+            }) || [];
+        }
+        else{
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            pokemonArray = pokemonList.filter((pokemonObject) => {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return !pokemonObject.name.includes('totem');
+            }).map((pokemonObject) => {
+                return pokemonObject.name;
+            }) || [];
+        }
 
         return stringSimilarity.findBestMatch(pokemon, pokemonArray).bestMatch.target;
     }
