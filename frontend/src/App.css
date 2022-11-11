@@ -1,7 +1,7 @@
+/*
 .App {
   text-align: center;
 }
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -35,4 +35,55 @@
   to {
     transform: rotate(360deg);
   }
+}*/
+
+p.pokemon-id{
+  background:lightgray;
+  width:4em;
+  height:2em;
+  border-radius:50%;
+  vertical-align: middle;
+  line-height:2em;
+}
+
+p.pokemon-name{
+  text-transform:capitalize;
+}
+img.pokemon-icon{
+  width:64px;
+  height:64px;
+}
+
+img.type{
+  width:75px;
+  height:25px;
+}
+
+
+p, img{
+  display:inline-block;
+  vertical-align:middle;
+  margin:0.5em;
+  text-align:center;
+}
+
+.pokemon-card{
+  width: 600px;
+  padding:0em 3em;
+  margin:0em 2em;
+}
+
+.pokemon-card.active{
+  background-color:darkgray;
+}
+
+.types{
+  display:inline-block;
+  vertical-align: middle;
+  float:right;
+  transform: translateY(50%);
+}
+
+.pokemon-card>p, .pokemon-card>img, .pokemon-card>p>p{
+  pointer-events: none;
 }
